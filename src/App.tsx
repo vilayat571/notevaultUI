@@ -8,6 +8,7 @@ import NotificationsPage from './pages/NotificationsPage'
 import NotePage from './pages/NotePage'
 import ProfilePage from './pages/ProfilePage'
 import Layout from './components/Layout'
+import LandingPage from './pages/Landing'
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { token, loading } = useAuth()
@@ -28,7 +29,7 @@ const GuestRoute = ({ children }: { children: React.ReactNode }) => {
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/" element={<GuestRoute><LandingPage /></GuestRoute>} />
       <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
       <Route path="/register" element={<GuestRoute><RegisterPage /></GuestRoute>} />
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
