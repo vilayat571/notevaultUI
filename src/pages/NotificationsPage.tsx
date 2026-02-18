@@ -78,7 +78,7 @@ export default function NotificationsPage() {
             <Bell size={20} className="text-amber-400" />
           </div>
           <div>
-            <h1 className="font-display text-3xl font-bold text-ink-50">Notifications</h1>
+            <h1 className=" text-3xl font-bold text-ink-50">Notifications</h1>
             <p className="text-ink-500 text-sm">{requests.length} pending {requests.length === 1 ? 'request' : 'requests'}</p>
           </div>
         </div>

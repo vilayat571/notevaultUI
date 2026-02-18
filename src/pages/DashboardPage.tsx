@@ -91,7 +91,7 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex items-start justify-between mb-8">
         <div>
-          <h1 className="font-display text-3xl font-bold text-ink-50 mb-1">My Notes</h1>
+          <h1 className="text-3xl font-bold text-ink-50 mb-1">My Notes</h1>
           <p className="text-ink-500 text-sm">{notes.length} {notes.length === 1 ? 'note' : 'notes'} in your vault</p>
         </div>
         <button
@@ -183,7 +183,7 @@ export default function DashboardPage() {
           <div className="w-16 h-16 bg-ink-900 border border-ink-800 rounded-2xl flex items-center justify-center mb-4">
             <BookOpen size={28} className="text-ink-700" />
           </div>
-          <h3 className="font-display text-xl font-semibold text-ink-400 mb-2">No notes yet</h3>
+          <h3 className=" text-xl font-semibold text-ink-400 mb-2">No notes yet</h3>
           <p className="text-ink-600 text-sm mb-6">Start by adding your first book, article or video</p>
           <button
             onClick={() => setShowModal(true)}

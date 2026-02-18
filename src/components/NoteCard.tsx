@@ -49,7 +49,7 @@ export default function NoteCard({ note, onDelete, isDragging }: Props) {
             className="w-full h-full flex items-end p-4"
             style={{ backgroundColor: note.coverColor || '#6c63ff' }}
           >
-            <span className="font-display text-white text-lg font-semibold leading-tight line-clamp-2 drop-shadow-sm">
+            <span className="text-white text-lg font-semibold leading-tight line-clamp-2 drop-shadow-sm">
               {note.title}
             </span>
           </div>
@@ -90,7 +90,7 @@ export default function NoteCard({ note, onDelete, isDragging }: Props) {
       {/* Body */}
       <div className="p-4">
         {note.category !== 'general' && (
-          <h3 className="font-display text-ink-100 font-semibold text-base leading-snug mb-1 line-clamp-2">
+          <h3 className=" text-ink-100 font-semibold text-base leading-snug mb-1 line-clamp-2">
             {note.title}
           </h3>
         )}

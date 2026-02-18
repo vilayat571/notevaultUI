@@ -54,10 +54,10 @@ export default function RegisterPage() {
           <div className="w-8 h-8 gold-shimmer rounded-lg flex items-center justify-center">
             <BookOpen size={15} className="text-ink-950" />
           </div>
-          <span className="font-display text-xl font-semibold text-ink-50">NoteVault</span>
+          <span className=" text-xl font-semibold text-ink-50">NoteVault</span>
         </div>
 
-        <h2 className="font-display text-3xl font-bold text-ink-50 mb-2">Create your vault</h2>
+        <h2 className=" text-3xl font-bold text-ink-50 mb-2">Create your vault</h2>
         <p className="text-ink-500 mb-8">Start collecting knowledge that lasts</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">

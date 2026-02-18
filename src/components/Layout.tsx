@@ -22,7 +22,7 @@ export default function Layout() {
             <div className="w-8 h-8 gold-shimmer rounded-lg flex items-center justify-center">
               <BookOpen size={16} className="text-ink-950" />
             </div>
-            <span className="font-display text-lg font-semibold text-ink-50">NoteVault</span>
+            <span className=" text-lg font-semibold text-ink-50">NoteVault</span>
           </div>
         </div>
 
