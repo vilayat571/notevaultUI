@@ -123,7 +123,6 @@ export default function LandingPage() {
           <div className="hidden md:flex items-center gap-8 text-sm text-white/50">
             <a href="#features" className="hover:text-white transition-colors">Features</a>
             <a href="#how" className="hover:text-white transition-colors">How it works</a>
-            <a href="#community" className="hover:text-white transition-colors">Community</a>
           </div>
           <div className="flex items-center gap-3">
             <a
@@ -133,7 +132,7 @@ export default function LandingPage() {
               Sign in
             </a>
             <a
-              href="https://www.mynotevault.site/login"
+              href="https://www.mynotevault.site/register"
               className="bg-amber-500 hover:bg-amber-400 text-black text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
             >
               Try free →
