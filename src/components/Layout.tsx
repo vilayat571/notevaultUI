@@ -1,6 +1,6 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { BookOpen, LayoutDashboard, User, LogOut } from 'lucide-react'
+import { BookOpen, LayoutDashboard, User, LogOut, Compass, Bell } from 'lucide-react'
 import { getImageUrl } from '../services/api'
 
 export default function Layout() {
@@ -40,6 +40,32 @@ export default function Layout() {
           >
             <LayoutDashboard size={17} />
             Dashboard
+          </NavLink>
+          <NavLink
+            to="/discover"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                isActive
+                  ? 'bg-amber-500/15 text-amber-400 border border-amber-500/20'
+                  : 'text-ink-400 hover:text-ink-100 hover:bg-ink-800'
+              }`
+            }
+          >
+            <Compass size={17} />
+            Discover
+          </NavLink>
+          <NavLink
+            to="/notifications"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                isActive
+                  ? 'bg-amber-500/15 text-amber-400 border border-amber-500/20'
+                  : 'text-ink-400 hover:text-ink-100 hover:bg-ink-800'
+              }`
+            }
+          >
+            <Bell size={17} />
+            Notifications
           </NavLink>
           <NavLink
             to="/profile"

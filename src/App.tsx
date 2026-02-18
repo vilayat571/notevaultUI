@@ -3,6 +3,8 @@ import { useAuth } from './context/AuthContext'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
+import DiscoverPage from './pages/DiscoverPage'
+import NotificationsPage from './pages/NotificationsPage'
 import NotePage from './pages/NotePage'
 import ProfilePage from './pages/ProfilePage'
 import Layout from './components/Layout'
@@ -31,6 +33,8 @@ export default function App() {
       <Route path="/register" element={<GuestRoute><RegisterPage /></GuestRoute>} />
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/discover" element={<DiscoverPage />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/notes/:id" element={<NotePage />} />
         <Route path="/profile" element={<ProfilePage />} />
       </Route>

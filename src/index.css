@@ -61,4 +61,64 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+
+  /* Tiptap Editor Prose Styles */
+  .prose {
+    @apply text-ink-200 leading-relaxed;
+  }
+  .prose h1 {
+    @apply text-2xl font-display font-bold text-ink-50 mt-6 mb-3;
+  }
+  .prose h2 {
+    @apply text-xl font-display font-bold text-ink-50 mt-5 mb-2;
+  }
+  .prose h3 {
+    @apply text-lg font-display font-semibold text-ink-100 mt-4 mb-2;
+  }
+  .prose p {
+    @apply mb-3 text-sm;
+  }
+  .prose strong {
+    @apply font-semibold text-ink-100;
+  }
+  .prose em {
+    @apply italic;
+  }
+  .prose ul, .prose ol {
+    @apply ml-5 mb-3 space-y-1;
+  }
+  .prose ul {
+    @apply list-disc;
+  }
+  .prose ol {
+    @apply list-decimal;
+  }
+  .prose li {
+    @apply text-sm;
+  }
+  .prose blockquote {
+    @apply border-l-4 border-amber-500/30 pl-4 italic text-ink-400 my-4;
+  }
+  .prose code {
+    @apply bg-ink-800 px-1.5 py-0.5 rounded text-amber-400 text-xs font-mono;
+  }
+  .prose pre {
+    @apply bg-ink-800 border border-ink-700 rounded-xl p-4 overflow-x-auto my-4;
+  }
+  .prose pre code {
+    @apply bg-transparent p-0 text-xs;
+  }
+  .prose a {
+    @apply text-amber-400 underline hover:text-amber-300 transition-colors;
+  }
+  .ProseMirror p.is-editor-empty:first-child::before {
+    @apply text-ink-600;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
+  .ProseMirror:focus {
+    @apply outline-none;
+  }
 }
