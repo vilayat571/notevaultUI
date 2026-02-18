@@ -127,13 +127,13 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-3">
             <a
-              href="https://www.mynotevault.site"
+              href="https://www.mynotevault.site/login"
               className="hidden sm:block text-sm text-white/60 hover:text-white transition-colors"
             >
               Sign in
             </a>
             <a
-              href="https://www.mynotevault.site"
+              href="https://www.mynotevault.site/login"
               className="bg-amber-500 hover:bg-amber-400 text-black text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
             >
               Try free →
