@@ -25,6 +25,29 @@ export const getMe = () =>
 export const updateMe = (formData: FormData) =>
   api.put('/api/v1/auth/me', formData);
 
+// Password Reset
+export const forgotPassword = (email: string) =>
+  api.post('/api/v1/auth/forgot-password', { email });
+
+export const resetPassword = (token: string, password: string) =>
+  api.post(`/api/v1/auth/reset-password/${token}`, { password });
+
+// ─── Users ───────────────────────────────────────────────────────────────────
+
+export const discoverUsers = (params?: { search?: string; limit?: number; skip?: number }) =>
+  api.get('/api/v1/users/discover', { params });
+
+export const getUserProfile = (userId: string) =>
+  api.get(`/api/v1/users/profile/${userId}`);
+
+// ─── Docs ────────────────────────────────────────────────────────────────────
+
+export const getAvailableDocs = () =>
+  api.get('/api/v1/docs');
+
+export const downloadDoc = (docKey: string) =>
+  api.get(`/api/v1/docs/download/${docKey}`, { responseType: 'blob' });
+
 // ─── Notes ───────────────────────────────────────────────────────────────────
 
 export const getAllNotes = (params?: { category?: string; status?: string; search?: string }) =>

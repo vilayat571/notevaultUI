@@ -8,6 +8,8 @@ export interface User {
   avatar: string;
   followers: string[];
   following: string[];
+  privacyMode: 'public' | 'private' | 'private_plus';
+  linkedinUrl?: string;
 }
 
 export type NoteCategory = 'book' | 'video' | 'article' | 'course' | 'general';
@@ -25,6 +27,7 @@ export interface Note {
   link: string;
   author: string;
   status: NoteStatus;
+  visibility: 'private' | 'followers' | 'public';
   isPublic: boolean;
   order: number;
   createdAt: string;

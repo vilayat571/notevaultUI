@@ -1,186 +1,38 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-
-    <!-- Primary Title & Description -->
-    <title>NoteVault | Every Great Reader Keeps Notes</title>
-    <meta
-      name="description"
-      content="NoteVault — Capture your thoughts on books, videos, articles and courses, all in one place. Rich notes, reading status tracking, and a community of readers."
-    />
-    <meta
-      name="keywords"
-      content="NoteVault, reading notes, book notes, note taking, reading tracker, book tracker, article notes, course notes, reading community, public notes, knowledge management, reading journal, book reviews, study notes"
-    />
-    <meta name="author" content="NoteVault" />
-
-    <!-- Open Graph / Facebook / WhatsApp -->
+    
+    <!-- Primary Meta Tags -->
+    <title>NoteVault - Your Personal Learning & Note-Taking Platform</title>
+    <meta name="title" content="NoteVault - Your Personal Learning & Note-Taking Platform" />
+    <meta name="description" content="Organize your learning journey. Take rich-text notes, track books & courses, share knowledge, and download programming documentation. Built by Hamzah." />
+    <meta name="keywords" content="note taking, learning platform, book tracking, programming documentation, study notes, knowledge sharing" />
+    <meta name="author" content="Hamzah - Vilayat Safarov" />
+    <link rel="canonical" href="https://notevault.app" />
+    
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://mynotevault.site/" />
-    <meta
-      property="og:title"
-      content="NoteVault | Every Great Reader Keeps Notes"
-    />
-    <meta
-      property="og:description"
-      content="Collect your thoughts on books, videos, articles and courses — all in one place. Reading made meaningful."
-    />
-    <meta property="og:image" content="https://mynotevault.site/og-image.jpg" />
-    <meta property="og:image:secure_url" content="https://mynotevault.site/og-image.jpg" />
-    <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="NoteVault — Every great reader keeps notes" />
-    <meta property="og:site_name" content="NoteVault" />
-    <meta property="og:locale" content="en_US" />
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@mynotevault" />
-    <meta
-      name="twitter:title"
-      content="NoteVault | Every Great Reader Keeps Notes"
-    />
-    <meta
-      name="twitter:description"
-      content="Collect your thoughts on books, videos, articles and courses — all in one place. Reading made meaningful."
-    />
-    <meta name="twitter:image" content="https://mynotevault.site/og-image.jpg" />
-    <meta name="twitter:image:alt" content="NoteVault — Every great reader keeps notes" />
-
-    <!-- Favicon & App Icons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-    <link rel="manifest" href="/site.webmanifest" />
-
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://mynotevault.site/" />
-
-    <!-- Robots -->
-    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-    <meta name="googlebot" content="index, follow" />
-
-    <!-- Theme Color -->
-    <meta name="theme-color" content="#F59E0B" />
-    <meta name="msapplication-TileColor" content="#F59E0B" />
-    <meta name="msapplication-TileImage" content="/mstile-144x144.png" />
-
-    <!-- PWA / Mobile -->
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="NoteVault" />
-    <meta name="application-name" content="NoteVault" />
-    <meta name="format-detection" content="telephone=no" />
-
-    <!-- Copyright & Rating -->
-    <meta name="copyright" content="© 2025 NoteVault. All rights reserved." />
-    <meta name="rating" content="general" />
-
-    <!-- Performance: Preconnect -->
+    <meta property="og:url" content="https://notevault.app" />
+    <meta property="og:title" content="NoteVault - Your Personal Learning & Note-Taking Platform" />
+    <meta property="og:description" content="Organize your learning journey. Take rich-text notes, track books & courses, share knowledge, and download programming documentation." />
+    <meta property="og:image" content="https://notevault.app/og-image.png" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://notevault.app" />
+    <meta property="twitter:title" content="NoteVault - Your Personal Learning & Note-Taking Platform" />
+    <meta property="twitter:description" content="Organize your learning journey. Take rich-text notes, track books & courses, share knowledge, and download programming documentation." />
+    <meta property="twitter:image" content="https://notevault.app/og-image.png" />
+    
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!-- Structured Data — WebSite -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "NoteVault",
-        "url": "https://mynotevault.site/",
-        "description": "Collect your thoughts on books, videos, articles and courses — all in one place.",
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": {
-            "@type": "EntryPoint",
-            "urlTemplate": "https://mynotevault.site/discover?q={search_term_string}"
-          },
-          "query-input": "required name=search_term_string"
-        }
-      }
-    </script>
-
-    <!-- Structured Data — SoftwareApplication -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
-        "name": "NoteVault",
-        "url": "https://mynotevault.site/",
-        "applicationCategory": "ProductivityApplication",
-        "operatingSystem": "Web",
-        "description": "A reading note platform where users can capture, organize and share notes from books, videos, articles and courses. Features rich text editing, reading status tracking, public/private notes, comments, and a social follow system.",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD"
-        },
-        "featureList": [
-          "Rich text note editor",
-          "5 content categories: Book, Video, Article, Course, General",
-          "4 reading statuses: Currently Reading, Finished, Will Repeat, Repeated",
-          "Public and private notes",
-          "Social follow system",
-          "Community note feed",
-          "Comments on notes"
-        ],
-        "screenshot": "https://mynotevault.site/og-image.jpg",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://mynotevault.site/favicon.png",
-          "width": 512,
-          "height": 512
-        }
-      }
-    </script>
-
-    <!-- Structured Data — Organization -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "NoteVault",
-        "url": "https://mynotevault.site/",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://mynotevault.site/favicon.png"
-        },
-        "foundingDate": "2025",
-        "description": "NoteVault helps readers capture, organize and share notes from books, videos, articles and courses.",
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "contactType": "customer support",
-          "url": "https://mynotevault.site/support"
-        }
-      }
-    </script>
-
-    <!-- Structured Data — BreadcrumbList -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://mynotevault.site/"
-          },
-          {
-            "@type": "ListItem",
-            "position": 2,
-            "name": "Login",
-            "item": "https://mynotevault.site/login"
-          }
-        ]
-      }
-    </script>
-
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <div id="root"></div>

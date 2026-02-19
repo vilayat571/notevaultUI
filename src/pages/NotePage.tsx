@@ -225,7 +225,7 @@ export default function NotePage() {
       </div>
 
       {/* Content */}
-      <div className="max-w-3xl mx-auto px-8 -mt-16 relative z-10 pb-20">
+      <div className="xl:w-[90%] lg:w-9/10 md:w-full sm:w-full mx-auto px-4 -mt-16 relative z-10 pb-20">
         {/* Author card */}
         {noteUser && !isOwner && (
           <div className="bg-ink-900 border border-ink-800 rounded-xl p-4 flex items-center gap-3 mb-6">
@@ -260,7 +260,7 @@ export default function NotePage() {
           </span>
         </div>
 
-        <h1 className="text-4xl font-bold text-ink-50 mb-3 leading-tight">{note.title}</h1>
+        <h1 className="font-display text-4xl font-bold text-ink-50 mb-3 leading-tight">{note.title}</h1>
 
         {note.author && (
           <p className="text-ink-500 font-mono text-sm mb-2">by {note.author}</p>
@@ -285,7 +285,7 @@ export default function NotePage() {
         <div className="border-t border-ink-800 mt-6 pt-8">
           {/* Content editor */}
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-ink-200">Notes & Thoughts</h2>
+            <h2 className="font-display text-xl font-semibold text-ink-200">Notes & Thoughts</h2>
             <div className="flex items-center gap-2">
               {editing ? (
                 <>
@@ -343,7 +343,7 @@ export default function NotePage() {
           <div className="mt-12 border-t border-ink-800 pt-8">
             <div className="flex items-center gap-2 mb-6">
               <MessageCircle size={18} className="text-ink-500" />
-              <h2 className="text-xl font-semibold text-ink-200">
+              <h2 className="font-display text-xl font-semibold text-ink-200">
                 Comments ({comments.length})
               </h2>
             </div>

@@ -57,7 +57,7 @@ export default function DiscoverPage() {
           <div className="w-10 h-10 bg-amber-500/15 border border-amber-500/30 rounded-xl flex items-center justify-center">
             <Compass size={20} className="text-amber-400" />
           </div>
-          <h1 className=" text-3xl font-bold text-ink-50">Discover</h1>
+          <h1 className="font-display text-3xl font-bold text-ink-50">Discover</h1>
         </div>
         <p className="text-ink-500 text-sm">Explore public notes from the community</p>
       </div>
@@ -118,7 +118,7 @@ export default function DiscoverPage() {
       ) : notes.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-32 text-center">
           <Compass size={48} className="text-ink-700 mb-4" />
-          <h3 className=" text-xl font-semibold text-ink-400 mb-2">No notes found</h3>
+          <h3 className="font-display text-xl font-semibold text-ink-400 mb-2">No notes found</h3>
           <p className="text-ink-600 text-sm">Try adjusting your filters</p>
         </div>
       ) : (

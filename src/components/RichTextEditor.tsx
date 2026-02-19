@@ -3,6 +3,7 @@ import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
+import Image from '@tiptap/extension-image'
 import { 
   Bold, 
   Italic, 
@@ -14,9 +15,10 @@ import {
   Code,
   Link2,
   Heading1,
-  Heading2
+  Heading2,
+  ImageIcon,
 } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 interface Props {
   content: string
@@ -25,6 +27,8 @@ interface Props {
 }
 
 export default function RichTextEditor({ content, onChange, placeholder }: Props) {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -40,6 +44,13 @@ export default function RichTextEditor({ content, onChange, placeholder }: Props
         openOnClick: false,
         HTMLAttributes: {
           class: 'text-amber-400 underline hover:text-amber-300',
+        },
+      }),
+      Image.configure({
+        inline: false,
+        allowBase64: true,
+        HTMLAttributes: {
+          class: 'rounded-xl max-w-full my-3 border border-ink-700',
         },
       }),
     ],
@@ -67,6 +78,19 @@ export default function RichTextEditor({ content, onChange, placeholder }: Props
     if (url) {
       editor.chain().focus().setLink({ href: url }).run()
     }
+  }
+
+  const handleImageFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      const src = ev.target?.result as string
+      if (src) editor.chain().focus().setImage({ src }).run()
+    }
+    reader.readAsDataURL(file)
+    // Reset so the same file can be picked again
+    e.target.value = ''
   }
 
   return (
@@ -203,6 +227,25 @@ export default function RichTextEditor({ content, onChange, placeholder }: Props
         >
           <Link2 size={16} />
         </button>
+
+        <div className="w-px h-5 bg-ink-800 mx-1" />
+
+        {/* Image upload */}
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          title="Insert image"
+          className="p-2 rounded-lg transition-colors text-ink-500 hover:text-ink-200 hover:bg-ink-800"
+        >
+          <ImageIcon size={16} />
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleImageFile}
+        />
       </div>
 
       {/* Editor */}

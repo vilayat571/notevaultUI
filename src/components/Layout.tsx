@@ -1,82 +1,83 @@
-import { Outlet, NavLink, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { BookOpen, LayoutDashboard, User, LogOut, Compass, Bell } from 'lucide-react'
+import { BookOpen, LayoutDashboard, User, LogOut, Compass, Bell, Menu, ChevronLeft } from 'lucide-react'
 import { getImageUrl } from '../services/api'
 
 export default function Layout() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  // Collapse sidebar on every route change (all screen sizes)
+  useEffect(() => {
+    setSidebarOpen(false)
+  }, [location.pathname])
 
   const handleLogout = () => {
     logout()
     navigate('/login')
   }
 
+  const navLinkClass = ({ isActive }:{isActive:boolean}) =>
+    `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+      isActive
+        ? 'bg-amber-500/15 text-amber-400 border border-amber-500/20'
+        : 'text-ink-400 hover:text-ink-100 hover:bg-ink-800'
+    }`
+
   return (
     <div className="flex h-screen bg-ink-950 overflow-hidden">
-      {/* Sidebar */}
-      <aside className="w-64 flex-shrink-0 bg-ink-900 border-r border-ink-800 flex flex-col">
-        {/* Logo */}
-        <div className="p-6 border-b border-ink-800">
+      {/* Overlay — all screen sizes */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar — always off-canvas, slides in when open */}
+      <aside
+        className={`
+          fixed inset-y-0 left-0 z-50 w-64 flex-shrink-0
+          bg-ink-900 border-r border-ink-800 flex flex-col
+          transform transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        `}
+      >
+        {/* Logo + close */}
+        <div className="p-6 border-b border-ink-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 gold-shimmer rounded-lg flex items-center justify-center">
               <BookOpen size={16} className="text-ink-950" />
             </div>
-            <span className=" text-lg font-semibold text-ink-50">NoteVault</span>
+            <span className="font-display text-lg font-semibold text-ink-50">NoteVault</span>
           </div>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="p-1.5 rounded-md text-ink-400 hover:text-ink-100 hover:bg-ink-800 transition-colors"
+            aria-label="Close sidebar"
+          >
+            <ChevronLeft size={18} />
+          </button>
         </div>
 
         {/* Nav */}
         <nav className="flex-1 p-4 space-y-1">
-          <NavLink
-            to="/dashboard"
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                isActive
-                  ? 'bg-amber-500/15 text-amber-400 border border-amber-500/20'
-                  : 'text-ink-400 hover:text-ink-100 hover:bg-ink-800'
-              }`
-            }
-          >
+          <NavLink to="/dashboard" className={navLinkClass}>
             <LayoutDashboard size={17} />
             Dashboard
           </NavLink>
-          <NavLink
-            to="/discover"
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                isActive
-                  ? 'bg-amber-500/15 text-amber-400 border border-amber-500/20'
-                  : 'text-ink-400 hover:text-ink-100 hover:bg-ink-800'
-              }`
-            }
-          >
+          <NavLink to="/discover" className={navLinkClass}>
             <Compass size={17} />
             Discover
           </NavLink>
-          <NavLink
-            to="/notifications"
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                isActive
-                  ? 'bg-amber-500/15 text-amber-400 border border-amber-500/20'
-                  : 'text-ink-400 hover:text-ink-100 hover:bg-ink-800'
-              }`
-            }
-          >
+          <NavLink to="/notifications" className={navLinkClass}>
             <Bell size={17} />
             Notifications
           </NavLink>
-          <NavLink
-            to="/profile"
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                isActive
-                  ? 'bg-amber-500/15 text-amber-400 border border-amber-500/20'
-                  : 'text-ink-400 hover:text-ink-100 hover:bg-ink-800'
-              }`
-            }
-          >
+          <NavLink to="/profile" className={navLinkClass}>
             <User size={17} />
             Profile
           </NavLink>
@@ -115,6 +116,23 @@ export default function Layout() {
 
       {/* Main content */}
       <main className="flex-1 overflow-y-auto">
+        {/* Top bar with menu toggle — always visible on all screen sizes */}
+        <div className="sticky top-0 z-50 flex items-center gap-3 px-4 py-3 bg-ink-950/80 backdrop-blur border-b border-ink-800">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="p-2 rounded-lg text-ink-400 hover:text-ink-100 hover:bg-ink-800 transition-colors"
+            aria-label="Open sidebar"
+          >
+            <Menu size={20} />
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 gold-shimmer rounded-md flex items-center justify-center">
+              <BookOpen size={12} className="text-ink-950" />
+            </div>
+            <span className="font-display text-base font-semibold text-ink-50">NoteVault</span>
+          </div>
+        </div>
+
         <Outlet />
       </main>
     </div>

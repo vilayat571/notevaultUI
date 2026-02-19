@@ -46,7 +46,7 @@ export default function LoginPage() {
             <div className="w-12 h-12 gold-shimmer rounded-2xl flex items-center justify-center mb-6">
               <BookOpen size={22} className="text-ink-950" />
             </div>
-            <h1 className=" text-4xl font-bold text-ink-50 leading-tight mb-4">
+            <h1 className="font-display text-4xl font-bold text-ink-50 leading-tight mb-4">
               Every great reader<br />
               <em className="text-amber-400">keeps notes.</em>
             </h1>
@@ -59,7 +59,7 @@ export default function LoginPage() {
             {['Reading', 'Reflecting', 'Remembering'].map((word, i) => (
               <div key={word} className="flex items-center gap-3" style={{ animationDelay: `${i * 100}ms` }}>
                 <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                <span className="text-ink-400 ">{word} — made meaningful.</span>
+                <span className="text-ink-400 font-body">{word} — made meaningful.</span>
               </div>
             ))}
           </div>
@@ -73,10 +73,10 @@ export default function LoginPage() {
             <div className="w-8 h-8 gold-shimmer rounded-lg flex items-center justify-center">
               <BookOpen size={15} className="text-ink-950" />
             </div>
-            <span className="text-xl font-semibold text-ink-50">NoteVault</span>
+            <span className="font-display text-xl font-semibold text-ink-50">NoteVault</span>
           </div>
 
-          <h2 className="text-3xl font-bold text-ink-50 mb-2">Welcome back</h2>
+          <h2 className="font-display text-3xl font-bold text-ink-50 mb-2">Welcome back</h2>
           <p className="text-ink-500 mb-8">Sign in to your vault</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -111,6 +111,9 @@ export default function LoginPage() {
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
+              <Link to="/forgot-password" className="text-xs text-ink-500 hover:text-amber-400 transition-colors mt-2 inline-block">
+                Forgot password?
+              </Link>
             </div>
 
             {error && (

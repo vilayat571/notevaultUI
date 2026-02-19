@@ -126,13 +126,13 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-3">
             <a
-              href="https://www.mynotevault.site/login"
+              href="/login"
               className="hidden sm:block text-sm text-white/60 hover:text-white transition-colors"
             >
               Sign in
             </a>
             <a
-              href="https://www.mynotevault.site/register"
+              href="/register"
               className="bg-amber-500 hover:bg-amber-400 text-black text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
             >
               Try free →
@@ -159,13 +159,13 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
-              href="https://www.mynotevault.site"
+              href="/register"
               className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-black font-bold px-8 py-4 rounded-xl text-base transition-all hover:scale-105 active:scale-95"
             >
               Start your vault — it's free
             </a>
             <a
-              href="https://www.mynotevault.site"
+              href="/login"
               className="w-full sm:w-auto bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium px-8 py-4 rounded-xl text-base transition-colors"
             >
               See a demo vault →
@@ -268,7 +268,7 @@ export default function LandingPage() {
             Join thousands of readers who finally have a system for their reading life.
           </p>
           <a
-            href="https://www.mynotevault.site"
+            href="/register"
             className="inline-block bg-amber-500 hover:bg-amber-400 text-black font-bold px-10 py-5 rounded-2xl text-lg transition-all hover:scale-105 active:scale-95"
           >
             Open your vault free →
@@ -285,7 +285,7 @@ export default function LandingPage() {
             <span className="font-semibold text-white/50">NoteVault</span>
           </div>
           <span>Built with MERN stack · Tailwind CSS</span>
-          <a href="https://www.mynotevault.site" className="hover:text-white transition-colors">
+          <a href="/" className="hover:text-white transition-colors">
             www.mynotevault.site
           </a>
         </div>

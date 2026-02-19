@@ -87,7 +87,7 @@ export default function NoteModal({ onClose, onSaved, editingNote }: Props) {
       <div className="bg-ink-900 border border-ink-700 rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-scale-in shadow-2xl shadow-black/50">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-ink-800">
-          <h2 className="text-xl font-semibold text-ink-50">
+          <h2 className="font-display text-xl font-semibold text-ink-50">
             {editingNote ? 'Edit Note' : 'New Note'}
           </h2>
           <button onClick={onClose} className="p-2 rounded-lg text-ink-500 hover:text-ink-100 hover:bg-ink-800 transition-colors">

@@ -6,7 +6,17 @@ import { useAuth } from '../context/AuthContext'
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
-    name: '', surname: '', username: '', email: '', password: '', bio: ''
+    name: '', 
+    surname: '', 
+    username: '', 
+    email: '', 
+    password: '', 
+    bio: '',
+    age: '',
+    subject: '',
+    linkedinUrl: '',
+    twitterUrl: '',
+    instagramUrl: ''
   })
   const [showPass, setShowPass] = useState(false)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
@@ -54,10 +64,10 @@ export default function RegisterPage() {
           <div className="w-8 h-8 gold-shimmer rounded-lg flex items-center justify-center">
             <BookOpen size={15} className="text-ink-950" />
           </div>
-          <span className=" text-xl font-semibold text-ink-50">NoteVault</span>
+          <span className="font-display text-xl font-semibold text-ink-50">NoteVault</span>
         </div>
 
-        <h2 className=" text-3xl font-bold text-ink-50 mb-2">Create your vault</h2>
+        <h2 className="font-display text-3xl font-bold text-ink-50 mb-2">Create your vault</h2>
         <p className="text-ink-500 mb-8">Start collecting knowledge that lasts</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -121,6 +131,43 @@ export default function RegisterPage() {
             <label className="text-xs font-medium text-ink-500 uppercase tracking-wider mb-1.5 block">Bio <span className="text-ink-700 normal-case">(optional)</span></label>
             <textarea name="bio" value={form.bio} onChange={handleChange} placeholder="A few words about yourself..."
               rows={2} className="w-full bg-ink-900 border border-ink-700 rounded-xl px-4 py-3 text-ink-100 placeholder-ink-600 focus:outline-none focus:border-amber-500/50 transition-all text-sm resize-none" />
+          </div>
+
+          {/* Optional fields section */}
+          <div className="pt-4 border-t border-ink-800">
+            <p className="text-xs font-semibold text-ink-400 uppercase tracking-wider mb-3">Optional Info</p>
+            
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs text-ink-600 mb-1 block">Age</label>
+                <input name="age" type="number" value={form.age} onChange={handleChange} placeholder="25"
+                  className="w-full bg-ink-900 border border-ink-700 rounded-xl px-4 py-2.5 text-ink-100 placeholder-ink-600 focus:outline-none focus:border-amber-500/50 transition-all text-sm" />
+              </div>
+
+              <div>
+                <label className="text-xs text-ink-600 mb-1 block">Field of Interest</label>
+                <input name="subject" value={form.subject} onChange={handleChange} placeholder="e.g., Software Development, Design..."
+                  className="w-full bg-ink-900 border border-ink-700 rounded-xl px-4 py-2.5 text-ink-100 placeholder-ink-600 focus:outline-none focus:border-amber-500/50 transition-all text-sm" />
+              </div>
+
+              <div>
+                <label className="text-xs text-ink-600 mb-1 block">LinkedIn URL</label>
+                <input name="linkedinUrl" value={form.linkedinUrl} onChange={handleChange} placeholder="https://linkedin.com/in/..."
+                  className="w-full bg-ink-900 border border-ink-700 rounded-xl px-4 py-2.5 text-ink-100 placeholder-ink-600 focus:outline-none focus:border-amber-500/50 transition-all text-sm font-mono" />
+              </div>
+
+              <div>
+                <label className="text-xs text-ink-600 mb-1 block">Twitter/X URL</label>
+                <input name="twitterUrl" value={form.twitterUrl} onChange={handleChange} placeholder="https://twitter.com/..."
+                  className="w-full bg-ink-900 border border-ink-700 rounded-xl px-4 py-2.5 text-ink-100 placeholder-ink-600 focus:outline-none focus:border-amber-500/50 transition-all text-sm font-mono" />
+              </div>
+
+              <div>
+                <label className="text-xs text-ink-600 mb-1 block">Instagram URL</label>
+                <input name="instagramUrl" value={form.instagramUrl} onChange={handleChange} placeholder="https://instagram.com/..."
+                  className="w-full bg-ink-900 border border-ink-700 rounded-xl px-4 py-2.5 text-ink-100 placeholder-ink-600 focus:outline-none focus:border-amber-500/50 transition-all text-sm font-mono" />
+              </div>
+            </div>
           </div>
 
           {error && (

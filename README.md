@@ -42,3 +42,4 @@ npm run dev             # Runs on http://localhost:5173
 - ✅ Drag & drop reorder
 - ✅ Public/private toggle
 - ✅ Edit profile + avatar upload
+- ✅ Fully dark themed, Playfair Display + DM Sans fonts

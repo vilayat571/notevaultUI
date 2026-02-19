@@ -2,13 +2,15 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
+import ResetPasswordPage from './pages/ResetPasswordPage'
 import DashboardPage from './pages/DashboardPage'
 import DiscoverPage from './pages/DiscoverPage'
 import NotificationsPage from './pages/NotificationsPage'
 import NotePage from './pages/NotePage'
 import ProfilePage from './pages/ProfilePage'
 import Layout from './components/Layout'
-import LandingPage from './pages/Landing'
+import LandingPage from './pages/LandingPage'
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { token, loading } = useAuth()
@@ -29,9 +31,11 @@ const GuestRoute = ({ children }: { children: React.ReactNode }) => {
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<GuestRoute><LandingPage /></GuestRoute>} />
+      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
       <Route path="/register" element={<GuestRoute><RegisterPage /></GuestRoute>} />
+      <Route path="/forgot-password" element={<GuestRoute><ForgotPasswordPage /></GuestRoute>} />
+      <Route path="/reset-password/:token" element={<GuestRoute><ResetPasswordPage /></GuestRoute>} />
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/discover" element={<DiscoverPage />} />
