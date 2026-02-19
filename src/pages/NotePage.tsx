@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Note, Comment, User as UserType } from '../types'
-import { getSingleNote, editNote, deleteNote, getImageUrl, getComments, addComment, deleteComment, downloadNote, sendFollowRequest, unfollowUser } from '../services/api'
+import { getSingleNote, editNote, deleteNote, getImageUrl, getComments, addComment, deleteComment, sendFollowRequest, unfollowUser } from '../services/api'
 import { ArrowLeft, Edit3, Trash2, Save, BookOpen, Video, FileText, GraduationCap, StickyNote, ExternalLink, Globe, Lock, X, Download, MessageCircle, Send, User, UserPlus, UserMinus } from 'lucide-react'
 import NoteModal from '../components/NoteModal'
 import RichTextEditor from '../components/RichTextEditor'
@@ -47,34 +47,228 @@ export default function NotePage() {
       .then(res => {
         setNote(res.data.note)
         setContent(res.data.note.content || '')
-        // Check if following
         const noteUser = res.data.note.user as UserType
         setIsFollowing(currentUser?.following?.includes(noteUser._id) || false)
       })
       .catch(() => navigate('/dashboard'))
       .finally(() => setLoading(false))
-    
-    // Fetch comments
+
     getComments(id)
       .then(res => setComments(res.data.comments))
       .catch(console.error)
   }, [id])
 
-  const handleDownload = async () => {
+  // ─── Client-side PDF generation (no backend request) ───────────────────────
+  const handleDownload = () => {
     if (!note) return
-    try {
-      const res = await downloadNote(note._id)
-      const url = window.URL.createObjectURL(new Blob([res.data]))
-      const link = document.createElement('a')
-      link.href = url
-      link.setAttribute('download', `${note.title}.pdf`)
-      document.body.appendChild(link)
-      link.click()
-      link.remove()
-    } catch (err) {
-      console.error(err)
+
+    const noteUserDisplay = noteUser
+      ? `${noteUser.name} ${noteUser.surname} (@${noteUser.username})`
+      : ''
+    const exportDate = new Date().toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric',
+    })
+
+    const installedAt = note.createdAt
+      ? new Date(note.createdAt).toLocaleString('en-US', {
+          year: 'numeric', month: 'long', day: 'numeric',
+          hour: '2-digit', minute: '2-digit',
+        })
+      : ''
+
+    // Cover: image, solid color, or nothing
+    const coverImageUrl = note.cover ? getImageUrl(note.cover) : null
+    const coverHtml = note.category === 'general' && note.coverColor
+      ? `<div class="cover-solid" style="background:${note.coverColor};"></div>`
+      : coverImageUrl
+        ? `<img class="cover-img" src="${coverImageUrl}" alt="${note.title}" crossorigin="anonymous" />`
+        : ''
+
+    const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>${note.title}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; background: #ffffff; }
+    body {
+      font-family: 'Nunito', sans-serif;
+      color: #1a1a2e;
+      line-height: 1.7;
+    }
+
+    /* Cover */
+    .cover-img {
+      display: block;
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+    }
+    .cover-solid {
+      width: 100%;
+      height: 300px;
+    }
+
+    /* 90% wide centred wrapper */
+    .wrapper {
+      width: 90%;
+      margin: 0 auto;
+      padding: 44px 0 64px;
+    }
+
+    header {
+      border-bottom: 3px solid #f59e0b;
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    h1 {
+      font-size: 36px;
+      font-weight: 800;
+      color: #111827;
+      line-height: 1.2;
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+    }
+    .author-line {
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 4px;
+    }
+    .description {
+      font-size: 15px;
+      color: #4b5563;
+      font-style: italic;
+      margin-top: 10px;
+    }
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #9ca3af;
+      margin-bottom: 14px;
+      font-family: 'Courier New', monospace;
+    }
+    .content-box {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-left: 4px solid #f59e0b;
+      border-radius: 8px;
+      padding: 32px 40px;
+    }
+    .content-box p { margin-bottom: 14px; font-size: 15px; color: #374151; }
+    .content-box p:last-child { margin-bottom: 0; }
+    .content-box h1, .content-box h2, .content-box h3 {
+      color: #111827; font-weight: 700; margin: 20px 0 10px;
+    }
+    .content-box h1 { font-size: 22px; }
+    .content-box h2 { font-size: 19px; }
+    .content-box h3 { font-size: 16px; }
+    .content-box ul, .content-box ol { margin: 10px 0 14px 22px; }
+    .content-box li { margin-bottom: 6px; font-size: 15px; color: #374151; }
+    .content-box blockquote {
+      border-left: 3px solid #d1d5db;
+      padding-left: 16px;
+      color: #6b7280;
+      font-style: italic;
+      margin: 14px 0;
+    }
+    .content-box strong { color: #111827; }
+    .content-box em { color: #4b5563; }
+    .content-box code {
+      font-family: 'Courier New', monospace;
+      background: #e5e7eb;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .content-box pre {
+      background: #e5e7eb;
+      padding: 16px;
+      border-radius: 6px;
+      overflow: auto;
+      margin: 14px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+    }
+    /* ── Images inside rich-text ── */
+    .content-box img {
+      display: block;
+      max-width: 100%;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      border-radius: 6px;
+      margin: 18px 0;
+    }
+    .empty-note { color: #9ca3af; font-style: italic; font-size: 15px; }
+    footer {
+      margin-top: 52px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      color: #d1d5db;
+      display: flex;
+      justify-content: space-between;
+    }
+    @media print {
+      .cover-img, .cover-solid { height: 240px; }
+      .wrapper { width: 90%; padding: 36px 0 52px; }
+      /* Hide browser default header/footer (date, title, page number) */
+      @page { size: A4; margin: 18mm 0; margin-top: 0; }
+      @page :first { margin-top: 0; }
+      /* Don't slice images across page breaks */
+      .content-box img { break-inside: avoid; page-break-inside: avoid; }
+      .content-box { break-inside: auto; }
+    }
+  </style>
+</head>
+<body>
+  ${coverHtml}
+
+  <div class="wrapper">
+    <header>
+      <h1>${note.title}</h1>
+      ${note.author ? `<p class="author-line">by ${note.author}</p>` : ''}
+      ${noteUserDisplay ? `<p class="author-line">Note by: ${noteUserDisplay}</p>` : ''}
+      ${installedAt ? `<p class="author-line" style="color:#b3b3b3;font-size:12px;margin-top:4px;">Added on ${installedAt}</p>` : ''}
+      ${note.description ? `<p class="description">${note.description}</p>` : ''}
+    </header>
+
+    <main>
+      <p class="section-title">Notes &amp; Thoughts</p>
+      <div class="content-box">
+        ${content ? content : '<p class="empty-note">No notes written yet.</p>'}
+      </div>
+    </main>
+
+    <footer>
+      <span>Exported on ${exportDate}</span>
+      <span>ReadShelf</span>
+    </footer>
+  </div>
+
+  <script>
+    window.onload = () => {
+      window.print()
+      window.onafterprint = () => window.close()
+    }
+  <\/script>
+</body>
+</html>`
+
+    const blob = new Blob([htmlContent], { type: 'text/html' })
+    const url = URL.createObjectURL(blob)
+    const printWindow = window.open(url, '_blank', 'width=1300,height=800')
+    if (printWindow) {
+      printWindow.onload = () => URL.revokeObjectURL(url)
     }
   }
+  // ───────────────────────────────────────────────────────────────────────────
 
   const handleFollowToggle = async () => {
     if (!note || typeof note.user === 'string') return
@@ -183,15 +377,14 @@ export default function NotePage() {
 
         {/* Actions */}
         <div className="absolute top-6 right-6 flex items-center gap-2">
-          {note.isPublic && (
-            <button
-              onClick={handleDownload}
-              className="bg-ink-950/60 backdrop-blur-sm border border-ink-700/50 px-3 py-2 rounded-xl text-ink-300 hover:text-ink-100 transition-colors text-sm flex items-center gap-2"
-            >
-              <Download size={15} />
-              Download
-            </button>
-          )}
+          <button
+            onClick={handleDownload}
+            className="bg-ink-950/60 backdrop-blur-sm border border-ink-700/50 px-3 py-2 rounded-xl text-ink-300 hover:text-ink-100 transition-colors text-sm flex items-center gap-2"
+          >
+            <Download size={15} />
+            Download
+          </button>
+
           {isOwner ? (
             <>
               <button
@@ -306,13 +499,15 @@ export default function NotePage() {
                   </button>
                 </>
               ) : (
-                <button
-                  onClick={() => setEditing(true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-ink-700 text-ink-500 hover:text-ink-200 text-xs transition-colors"
-                >
-                  <Edit3 size={13} />
-                  Edit
-                </button>
+                isOwner && (
+                  <button
+                    onClick={() => setEditing(true)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-ink-700 text-ink-500 hover:text-ink-200 text-xs transition-colors"
+                  >
+                    <Edit3 size={13} />
+                    Edit
+                  </button>
+                )
               )}
             </div>
           </div>
@@ -327,7 +522,7 @@ export default function NotePage() {
             <div className="bg-ink-900 border border-ink-800 rounded-2xl px-6 py-5">
               <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: content }} />
             </div>
-          ) : (
+          ) : isOwner ? (
             <button
               onClick={() => setEditing(true)}
               className="w-full bg-ink-900 border border-dashed border-ink-800 rounded-2xl px-6 py-12 text-center text-ink-600 hover:border-amber-500/30 hover:text-ink-500 transition-all"
@@ -335,6 +530,10 @@ export default function NotePage() {
               <Edit3 size={20} className="mx-auto mb-2 text-ink-700" />
               <p className="text-sm">Click to add your notes and reflections...</p>
             </button>
+          ) : (
+            <div className="bg-ink-900 border border-dashed border-ink-800 rounded-2xl px-6 py-12 text-center text-ink-600">
+              <p className="text-sm">No notes written yet.</p>
+            </div>
           )}
         </div>
 
