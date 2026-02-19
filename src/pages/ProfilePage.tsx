@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { updateMe, getImageUrl, getFollowers, getFollowing, removeFollower, unfollowUser, getAllNotes } from '../services/api'
-import { Camera, Save, User, Users, UserMinus } from 'lucide-react'
+import { Camera, Save, User, Users, UserMinus, Instagram, Linkedin, Twitter, BookOpen, Globe } from 'lucide-react'
 import { Note } from '../types'
 import NoteCard from '../components/NoteCard'
 
@@ -12,7 +12,8 @@ interface UserItem {
   name: string
   surname: string
   username: string
-  avatar: string
+  avatar: string,
+  
 }
 
 export default function ProfilePage() {
@@ -23,6 +24,11 @@ export default function ProfilePage() {
     surname: user?.surname || '',
     username: user?.username || '',
     bio: user?.bio || '',
+    subject: user?.subject || '',
+    instagramUrl: user?.instagramUrl || '',
+    twitterUrl: user?.twitterUrl || '',
+    linkedinUrl: user?.linkedinUrl || '',
+    privacyMode: user?.privacyMode || 'public',
   })
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [avatarPreview, setAvatarPreview] = useState('')
@@ -38,13 +44,9 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!user) return
-    if (activeTab === 'followers') {
-      fetchFollowers()
-    } else if (activeTab === 'following') {
-      fetchFollowing()
-    } else if (activeTab === 'feed') {
-      fetchFeed()
-    }
+    if (activeTab === 'followers') fetchFollowers()
+    else if (activeTab === 'following') fetchFollowing()
+    else if (activeTab === 'feed') fetchFeed()
   }, [activeTab, user])
 
   const fetchFollowers = async () => {
@@ -53,11 +55,8 @@ export default function ProfilePage() {
     try {
       const res = await getFollowers(user._id)
       setFollowers(res.data.followers)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoadingData(false)
-    }
+    } catch (err) { console.error(err) }
+    finally { setLoadingData(false) }
   }
 
   const fetchFollowing = async () => {
@@ -66,27 +65,20 @@ export default function ProfilePage() {
     try {
       const res = await getFollowing(user._id)
       setFollowing(res.data.following)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoadingData(false)
-    }
+    } catch (err) { console.error(err) }
+    finally { setLoadingData(false) }
   }
 
   const fetchFeed = async () => {
     setLoadingData(true)
     try {
-      // Get all notes and filter for followed users' public notes
       const res = await getAllNotes()
       setFeedNotes(res.data.notes)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoadingData(false)
-    }
+    } catch (err) { console.error(err) }
+    finally { setLoadingData(false) }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
@@ -122,9 +114,7 @@ export default function ProfilePage() {
     try {
       await removeFollower(userId)
       setFollowers(prev => prev.filter(f => f._id !== userId))
-    } catch (err) {
-      console.error(err)
-    }
+    } catch (err) { console.error(err) }
   }
 
   const handleUnfollow = async (userId: string) => {
@@ -132,12 +122,13 @@ export default function ProfilePage() {
     try {
       await unfollowUser(userId)
       setFollowing(prev => prev.filter(f => f._id !== userId))
-    } catch (err) {
-      console.error(err)
-    }
+    } catch (err) { console.error(err) }
   }
 
   const avatarSrc = avatarPreview || (user?.avatar ? getImageUrl(user.avatar) : '')
+
+  const inputClass = "w-full bg-ink-900 border border-ink-700 rounded-xl px-4 py-3 text-ink-100 placeholder-ink-600 focus:outline-none focus:border-amber-500/50 transition-colors text-sm"
+  const labelClass = "text-xs font-medium text-ink-500 uppercase tracking-wider mb-2 block"
 
   return (
     <div className="min-h-screen p-8">
@@ -145,7 +136,7 @@ export default function ProfilePage() {
         {/* Header with tabs */}
         <div className="mb-8">
           <h1 className="font-display text-3xl font-bold text-ink-50 mb-6">Profile</h1>
-          <div className="flex gap-2 border-b border-ink-800">
+          <div className="flex gap-2 border-b border-ink-800 overflow-x-auto">
             {[
               { key: 'profile' as Tab, label: 'Edit Profile' },
               { key: 'followers' as Tab, label: `Followers (${user?.followers?.length || 0})` },
@@ -155,7 +146,7 @@ export default function ProfilePage() {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`px-4 py-3 text-sm font-medium transition-all ${
+                className={`px-4 py-3 text-sm font-medium whitespace-nowrap transition-all ${
                   activeTab === tab.key
                     ? 'text-amber-400 border-b-2 border-amber-400'
                     : 'text-ink-500 hover:text-ink-200'
@@ -167,9 +158,11 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Profile Tab */}
+        {/* ── Profile Tab ── */}
         {activeTab === 'profile' && (
           <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
+
+            {/* Avatar */}
             <div className="flex items-center gap-6">
               <div className="relative">
                 <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-ink-700 bg-ink-800">
@@ -199,36 +192,124 @@ export default function ProfilePage() {
 
             <div className="h-px bg-ink-800" />
 
+            {/* Name + Surname */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-medium text-ink-500 uppercase tracking-wider mb-2 block">Name</label>
-                <input name="name" value={form.name} onChange={handleChange} required
-                  className="w-full bg-ink-900 border border-ink-700 rounded-xl px-4 py-3 text-ink-100 focus:outline-none focus:border-amber-500/50 transition-colors text-sm" />
+                <label className={labelClass}>Name</label>
+                <input name="name" value={form.name} onChange={handleChange} required className={inputClass} />
               </div>
               <div>
-                <label className="text-xs font-medium text-ink-500 uppercase tracking-wider mb-2 block">Surname</label>
-                <input name="surname" value={form.surname} onChange={handleChange} required
-                  className="w-full bg-ink-900 border border-ink-700 rounded-xl px-4 py-3 text-ink-100 focus:outline-none focus:border-amber-500/50 transition-colors text-sm" />
+                <label className={labelClass}>Surname</label>
+                <input name="surname" value={form.surname} onChange={handleChange} required className={inputClass} />
               </div>
             </div>
 
+            {/* Username */}
             <div>
-              <label className="text-xs font-medium text-ink-500 uppercase tracking-wider mb-2 block">Username</label>
+              <label className={labelClass}>Username</label>
               <input name="username" value={form.username} onChange={handleChange} required
-                className="w-full bg-ink-900 border border-ink-700 rounded-xl px-4 py-3 text-ink-100 focus:outline-none focus:border-amber-500/50 transition-colors text-sm font-mono" />
+                className={inputClass + ' font-mono'} />
             </div>
 
+            {/* Subject */}
             <div>
-              <label className="text-xs font-medium text-ink-500 uppercase tracking-wider mb-2 block">Bio</label>
-              <textarea name="bio" value={form.bio} onChange={handleChange} placeholder="A few words about yourself..." rows={3}
-                className="w-full bg-ink-900 border border-ink-700 rounded-xl px-4 py-3 text-ink-100 placeholder-ink-600 focus:outline-none focus:border-amber-500/50 transition-colors text-sm resize-none" />
+              <label className={labelClass}>Subject / Field</label>
+              <input
+                name="subject"
+                value={form.subject}
+                onChange={handleChange}
+                placeholder="e.g. Software Engineering, Design, Medicine..."
+                className={inputClass}
+              />
+            </div>
+
+            {/* Bio */}
+            <div>
+              <label className={labelClass}>Bio</label>
+              <textarea name="bio" value={form.bio} onChange={handleChange}
+                placeholder="A few words about yourself..." rows={3}
+                className={inputClass + ' resize-none'} />
+            </div>
+
+            <div className="h-px bg-ink-800" />
+
+            {/* Social links */}
+            <div>
+              <p className={labelClass}>Social Links</p>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-ink-800 border border-ink-700 flex items-center justify-center flex-shrink-0">
+                    <Instagram size={15} className="text-pink-400" />
+                  </div>
+                  <input
+                    name="instagramUrl"
+                    value={form.instagramUrl}
+                    onChange={handleChange}
+                    placeholder="https://instagram.com/yourhandle"
+                    className={inputClass}
+                  />
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-ink-800 border border-ink-700 flex items-center justify-center flex-shrink-0">
+                    <Twitter size={15} className="text-sky-400" />
+                  </div>
+                  <input
+                    name="twitterUrl"
+                    value={form.twitterUrl}
+                    onChange={handleChange}
+                    placeholder="https://twitter.com/yourhandle"
+                    className={inputClass}
+                  />
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-ink-800 border border-ink-700 flex items-center justify-center flex-shrink-0">
+                    <Linkedin size={15} className="text-blue-400" />
+                  </div>
+                  <input
+                    name="linkedinUrl"
+                    value={form.linkedinUrl}
+                    onChange={handleChange}
+                    placeholder="https://linkedin.com/in/yourprofile"
+                    className={inputClass}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="h-px bg-ink-800" />
+
+            {/* Privacy */}
+            <div>
+              <label className={labelClass}>Profile Privacy</label>
+              <div className="flex gap-3">
+                {['public', 'private'].map(mode => (
+                  <button
+                    key={mode}
+                    type="button"
+                    onClick={() => setForm(prev => ({ ...prev, privacyMode: mode }))}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all ${
+                      form.privacyMode === mode
+                        ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                        : 'border-ink-700 text-ink-500 hover:text-ink-200 hover:border-ink-600'
+                    }`}
+                  >
+                    {mode === 'public' ? <Globe size={14} /> : <User size={14} />}
+                    {mode.charAt(0).toUpperCase() + mode.slice(1)}
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-ink-600 mt-2">
+                {form.privacyMode === 'public'
+                  ? 'Anyone can find and follow you.'
+                  : 'Only approved followers can see your notes.'}
+              </p>
             </div>
 
             {error && (
               <p className="text-sm text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl px-4 py-3">{error}</p>
             )}
             {success && (
-              <p className="text-sm text-green-400 bg-green-500/10 border border-green-500/20 rounded-xl px-4 py-3">Profile updated!</p>
+              <p className="text-sm text-green-400 bg-green-500/10 border border-green-500/20 rounded-xl px-4 py-3">Profile updated successfully!</p>
             )}
 
             <button type="submit" disabled={loading}
@@ -239,7 +320,7 @@ export default function ProfilePage() {
           </form>
         )}
 
-        {/* Followers Tab */}
+        {/* ── Followers Tab ── */}
         {activeTab === 'followers' && (
           <div className="animate-fade-in">
             {loadingData ? (
@@ -280,7 +361,7 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* Following Tab */}
+        {/* ── Following Tab ── */}
         {activeTab === 'following' && (
           <div className="animate-fade-in">
             {loadingData ? (
@@ -296,20 +377,20 @@ export default function ProfilePage() {
               </div>
             ) : (
               <div className="space-y-3">
-                {following.map(user => (
-                  <div key={user._id} className="bg-ink-900 border border-ink-800 rounded-xl p-4 flex items-center gap-4">
-                    {user.avatar ? (
-                      <img src={getImageUrl(user.avatar)} alt={user.name} className="w-12 h-12 rounded-full object-cover" />
+                {following.map(u => (
+                  <div key={u._id} className="bg-ink-900 border border-ink-800 rounded-xl p-4 flex items-center gap-4">
+                    {u.avatar ? (
+                      <img src={getImageUrl(u.avatar)} alt={u.name} className="w-12 h-12 rounded-full object-cover" />
                     ) : (
                       <div className="w-12 h-12 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center">
                         <User size={20} className="text-amber-400" />
                       </div>
                     )}
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-ink-100">{user.name} {user.surname}</p>
-                      <p className="text-xs text-ink-500 font-mono">@{user.username}</p>
+                      <p className="text-sm font-medium text-ink-100">{u.name} {u.surname}</p>
+                      <p className="text-xs text-ink-500 font-mono">@{u.username}</p>
                     </div>
-                    <button onClick={() => handleUnfollow(user._id)}
+                    <button onClick={() => handleUnfollow(u._id)}
                       className="flex items-center gap-2 px-3 py-2 rounded-lg border border-ink-700 text-ink-500 hover:text-rose-400 hover:border-rose-500/30 transition-all text-xs">
                       <UserMinus size={13} />
                       Unfollow
@@ -321,7 +402,7 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* Feed Tab */}
+        {/* ── Feed Tab ── */}
         {activeTab === 'feed' && (
           <div className="animate-fade-in">
             {loadingData ? (
@@ -332,8 +413,9 @@ export default function ProfilePage() {
               </div>
             ) : feedNotes.length === 0 ? (
               <div className="bg-ink-900 border border-ink-800 rounded-2xl p-12 text-center">
-                <Users size={32} className="text-ink-700 mx-auto mb-3" />
-                <p className="text-ink-500">No posts from followed users</p>
+                <BookOpen size={32} className="text-ink-700 mx-auto mb-3" />
+                <p className="text-ink-500 mb-1">No posts from followed users</p>
+                <p className="text-xs text-ink-700">Follow some readers to see their notes here</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -31,13 +31,24 @@ const GuestRoute = ({ children }: { children: React.ReactNode }) => {
   return !token ? <>{children}</> : <Navigate to="/dashboard" replace />
 }
 
+// Shows landing page to guests, redirects authenticated users straight to dashboard
+const HomeRoute = () => {
+  const { token, loading } = useAuth()
+  if (loading) return (
+    <div className="min-h-screen bg-ink-950 flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
+    </div>
+  )
+  return token ? <Navigate to="/dashboard" replace /> : <LandingPage />
+}
+
 export default function App() {
   return (
     <>
       <ScrollToTop />
       <Analytics />
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<HomeRoute />} />
         <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
         <Route path="/register" element={<GuestRoute><RegisterPage /></GuestRoute>} />
         <Route path="/forgot-password" element={<GuestRoute><ForgotPasswordPage /></GuestRoute>} />

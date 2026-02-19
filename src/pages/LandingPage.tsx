@@ -1,4 +1,4 @@
-import { BookOpen } from "lucide-react";
+import { BookOpen, ChevronUp } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 // Animated counter hook
@@ -62,6 +62,9 @@ const TESTIMONIALS = [
   },
 ];
 
+  const scrollToTop    = () => window.scrollTo({ top: 0, behavior: 'smooth' })
+
+  
 const STATUS_PILLS = [
   { label: "Currently Reading", color: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
   { label: "Finished", color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
@@ -290,6 +293,14 @@ export default function LandingPage() {
           </a>
         </div>
       </footer>
+
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-10 right-8 z-50 w-11 h-11 bg-amber-500 hover:bg-amber-400 text-ink-950 rounded-full flex items-center justify-center shadow-lg shadow-amber-500/30 transition-all"
+          title="Back to top"
+        >
+          <ChevronUp size={20} />
+        </button>
     </div>
   );
 }
