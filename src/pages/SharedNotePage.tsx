@@ -10,7 +10,7 @@ import {
 import { useAuth } from '../context/AuthContext'
 
 // ── No-auth fetch — works for logged-out visitors ─────────────────────────────
-const API_BASE = (import.meta.env.VITE_API_URL as string | undefined) ?? '/api'
+const API_BASE = 'https://notevaultapi-production.up.railway.app/'
 
 async function fetchPublicNotes(category: string): Promise<Note[]> {
   const url = `${API_BASE}/notes/discover?category=${encodeURIComponent(category)}&limit=200`

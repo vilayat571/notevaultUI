@@ -16,20 +16,32 @@ interface UserItem {
   
 }
 
+
 export default function ProfilePage() {
   const { user, updateUser } = useAuth()
   const [activeTab, setActiveTab] = useState<Tab>('profile')
-  const [form, setForm] = useState({
-    name: user?.name || '',
-    surname: user?.surname || '',
-    username: user?.username || '',
-    bio: user?.bio || '',
-    subject: user?.subject || '',
-    instagramUrl: user?.instagramUrl || '',
-    twitterUrl: user?.twitterUrl || '',
-    linkedinUrl: user?.linkedinUrl || '',
-    privacyMode: user?.privacyMode || 'public',
-  })
+// With this (explicit type annotation):
+const [form, setForm] = useState<{
+  name: string
+  surname: string
+  username: string
+  bio: string
+  subject: string
+  instagramUrl: string
+  twitterUrl: string
+  linkedinUrl: string
+  privacyMode: 'public' | 'private'
+}>({
+  name: user?.name || '',
+  surname: user?.surname || '',
+  username: user?.username || '',
+  bio: user?.bio || '',
+  subject: user?.subject || '',
+  instagramUrl: user?.instagramUrl || '',
+  twitterUrl: user?.twitterUrl || '',
+  linkedinUrl: user?.linkedinUrl || '',
+  privacyMode: (user?.privacyMode as 'public' | 'private') || 'public',
+})
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [avatarPreview, setAvatarPreview] = useState('')
   const [loading, setLoading] = useState(false)
@@ -286,8 +298,8 @@ export default function ProfilePage() {
                   <button
                     key={mode}
                     type="button"
-                    onClick={() => setForm(prev => ({ ...prev, privacyMode: mode }))}
-                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all ${
+onClick={() => setForm(prev => ({ ...prev, privacyMode: mode as 'public' | 'private' }))}      
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all ${
                       form.privacyMode === mode
                         ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
                         : 'border-ink-700 text-ink-500 hover:text-ink-200 hover:border-ink-600'

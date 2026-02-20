@@ -1,15 +1,19 @@
 export interface User {
-  _id: string;
-  name: string;
-  surname: string;
-  username: string;
-  email: string;
-  bio: string;
-  avatar: string;
-  followers: string[];
-  following: string[];
-  privacyMode: 'public' | 'private' | 'private_plus';
-  linkedinUrl?: string;
+  _id: string
+  name: string
+  surname: string
+  username: string
+  email: string
+  avatar?: string
+  bio?: string
+  followers?: string[]
+  following?: string[]
+  // Add these:
+  subject?: string
+  instagramUrl?: string
+  twitterUrl?: string
+  linkedinUrl?: string
+  privacyMode?: 'public' | 'private'
 }
 
 export type NoteCategory = 'book' | 'video' | 'article' | 'course' | 'general';
