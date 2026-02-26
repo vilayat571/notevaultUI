@@ -36,8 +36,8 @@ const FEATURES = [
   },
   {
     icon: "👥",
-    title: "Follow & Discover",
-    desc: "Follow other readers, explore their vaults, and leave comments on notes.",
+    title: "Discover",
+    desc: "Discover other readers, explore their vaults, and read their notes.",
   },
 ];
 
@@ -58,7 +58,7 @@ const TESTIMONIALS = [
     avatar: "JL",
     name: "James L.",
     handle: "@jlreads",
-    text: "Following other readers and seeing their notes is honestly the best feature. So much discovery.",
+    text: "Discover other readers and seeing their notes is honestly the best feature. So much discovery.",
   },
 ];
 
@@ -158,7 +158,7 @@ export default function LandingPage() {
           </h1>
           <p className="text-lg md:text-xl text-white/50 max-w-2xl mx-auto mb-10 leading-relaxed">
             Collect your thoughts on books, videos, articles and courses — all in one place.
-            Follow others. Share what you learn. Remember everything.
+            Discover others. Share what you learn. Remember everything.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a

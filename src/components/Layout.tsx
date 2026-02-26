@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { BookOpen, LayoutDashboard, User, LogOut, Compass, Bell, Menu, ChevronLeft } from 'lucide-react'
+import { BookOpen, LayoutDashboard, User, LogOut, Compass, Bell, Menu, Users } from 'lucide-react'
 import { getImageUrl } from '../services/api'
 
 export default function Layout() {
@@ -10,7 +10,6 @@ export default function Layout() {
   const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
-  // Collapse sidebar on every route change (all screen sizes)
   useEffect(() => {
     setSidebarOpen(false)
   }, [location.pathname])
@@ -20,7 +19,7 @@ export default function Layout() {
     navigate('/login')
   }
 
-  const navLinkClass = ({ isActive }:{isActive:boolean}) =>
+  const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
       isActive
         ? 'bg-amber-500/15 text-amber-400 border border-amber-500/20'
@@ -29,7 +28,7 @@ export default function Layout() {
 
   return (
     <div className="flex h-screen bg-ink-950 overflow-hidden">
-      {/* Overlay — all screen sizes */}
+      {/* Overlay */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
@@ -37,34 +36,25 @@ export default function Layout() {
         />
       )}
 
-      {/* Sidebar — always off-canvas, slides in when open */}
+      {/* Sidebar */}
       <aside
         className={`
           fixed inset-y-0 left-0 z-50 w-64 flex-shrink-0
-          bg-ink-900 border-r border-ink-800 flex flex-col
+          bg-[#0f0d0b] border-r border-ink-800 flex flex-col
           transform transition-transform duration-300 ease-in-out
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
-        {/* Logo + close */}
-        <div className="p-6 border-b border-ink-800 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 gold-shimmer rounded-lg flex items-center justify-center">
-              <BookOpen size={16} className="text-ink-950" />
-            </div>
-            <span className="font-display text-lg font-semibold text-ink-50">NoteVault</span>
+        {/* Logo inside sidebar */}
+        <div className="flex items-center gap-2 px-4 py-4 border-b border-ink-800">
+          <div className="w-7 h-7 gold-shimmer rounded-md flex items-center justify-center">
+            <BookOpen size={13} className="text-ink-950" />
           </div>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="p-1.5 rounded-md text-ink-400 hover:text-ink-100 hover:bg-ink-800 transition-colors"
-            aria-label="Close sidebar"
-          >
-            <ChevronLeft size={18} />
-          </button>
+          <span className="font-display text-base font-semibold text-ink-50">NoteVault</span>
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 p-4 space-y-1">
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           <NavLink to="/dashboard" className={navLinkClass}>
             <LayoutDashboard size={17} />
             Dashboard
@@ -73,9 +63,9 @@ export default function Layout() {
             <Compass size={17} />
             Discover
           </NavLink>
-          <NavLink to="/notifications" className={navLinkClass}>
-            <Bell size={17} />
-            Notifications
+          <NavLink to="/users" className={navLinkClass}>
+            <Users size={17} />
+            People
           </NavLink>
           <NavLink to="/profile" className={navLinkClass}>
             <User size={17} />
@@ -116,12 +106,12 @@ export default function Layout() {
 
       {/* Main content */}
       <main className="flex-1 overflow-y-auto">
-        {/* Top bar with menu toggle — always visible on all screen sizes */}
-        <div className="sticky top-0 z-50 flex items-center gap-3 px-4 py-3 bg-ink-950/80 backdrop-blur border-b border-ink-800">
+        {/* Top bar */}
+        <div className="sticky top-0 z-40 flex items-center gap-3 px-4 py-3 bg-ink-950/80 backdrop-blur border-b border-ink-800">
           <button
-            onClick={() => setSidebarOpen(true)}
+            onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-2 rounded-lg text-ink-400 hover:text-ink-100 hover:bg-ink-800 transition-colors"
-            aria-label="Open sidebar"
+            aria-label="Toggle sidebar"
           >
             <Menu size={20} />
           </button>

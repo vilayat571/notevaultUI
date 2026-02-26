@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Note, Comment, User as UserType } from '../types'
+import { Note, User as UserType } from '../types'
 import {
   getSingleNote, editNote, deleteNote, getImageUrl,
-  getComments, addComment, deleteComment,
-  sendFollowRequest, unfollowUser,
 } from '../services/api'
 import {
   ArrowLeft, Edit3, Trash2, Save, BookOpen, Video, FileText,
@@ -56,14 +54,7 @@ export default function NotePage() {
   const [saving, setSaving]                 = useState(false)
   const [showEditModal, setShowEditModal]   = useState(false)
 
-  // Comments
-  const [comments, setComments]             = useState<Comment[]>([])
-  const [commentText, setCommentText]       = useState('')
-  const [submittingComment, setSubmitting]  = useState(false)
 
-  // Follow
-  const [isFollowing, setIsFollowing]       = useState(false)
-  const [followLoading, setFollowLoading]   = useState(false)
 
   // UI
   const [copied, setCopied]                 = useState(false)
@@ -88,14 +79,11 @@ export default function NotePage() {
         setNote(n)
         setContent(n.content || '')
         const noteUser = n.user as UserType
-        setIsFollowing(currentUser?.following?.includes(noteUser._id) ?? false)
       })
       .catch(() => navigate('/dashboard'))
       .finally(() => setLoading(false))
 
-    getComments(id)
-      .then(res => setComments(res.data.comments))
-      .catch(console.error)
+
   }, [id])
 
   // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -215,50 +203,9 @@ export default function NotePage() {
     if (win) win.onload = () => URL.revokeObjectURL(url)
   }
 
-  // ─── Follow / Unfollow ──────────────────────────────────────────────────────
-  const handleFollowToggle = async () => {
-    if (!note || typeof note.user === 'string') return
-    setFollowLoading(true)
-    try {
-      if (isFollowing) {
-        await unfollowUser(note.user._id)
-        setIsFollowing(false)
-      } else {
-        await sendFollowRequest(note.user._id)
-        alert('Follow request sent!')
-      }
-    } catch (err: any) {
-      alert(err.response?.data?.message || 'Action failed')
-    } finally {
-      setFollowLoading(false)
-    }
-  }
 
-  // ─── Comments ───────────────────────────────────────────────────────────────
-  const handleAddComment = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!commentText.trim() || !note) return
-    setSubmitting(true)
-    try {
-      const res = await addComment(note._id, commentText)
-      setComments(prev => [res.data.comment, ...prev])
-      setCommentText('')
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setSubmitting(false)
-    }
-  }
+ 
 
-  const handleDeleteComment = async (commentId: string) => {
-    if (!confirm('Delete this comment?')) return
-    try {
-      await deleteComment(commentId)
-      setComments(prev => prev.filter(c => c._id !== commentId))
-    } catch (err) {
-      console.error(err)
-    }
-  }
 
   // ─── Save note content ──────────────────────────────────────────────────────
   const handleSaveContent = async () => {
@@ -331,7 +278,6 @@ export default function NotePage() {
           Back
         </button>
 
-        {/* Jump to comments */}
         <button
           onClick={scrollToBottom}
           className="absolute bottom-1 right-24 z-50 flex items-center gap-1.5 bg-ink-950/60 backdrop-blur-sm border border-ink-700/50 px-3 py-2 rounded-xl text-xs text-ink-400 hover:text-ink-100 transition-colors"
@@ -367,8 +313,7 @@ export default function NotePage() {
             Download
           </button>
 
-          {/* Owner: edit + delete | Visitor: follow */}
-          {isOwner ? (
+          {isOwner && (
             <>
               <button
                 onClick={() => setShowEditModal(true)}
@@ -385,20 +330,7 @@ export default function NotePage() {
                 <Trash2 size={15} />
               </button>
             </>
-          ) : noteUser && (
-            <button
-              onClick={handleFollowToggle}
-              disabled={followLoading}
-              className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all disabled:opacity-60 ${
-                isFollowing
-                  ? 'bg-ink-950/60 backdrop-blur-sm border border-ink-700/50 text-ink-400 hover:text-rose-400 hover:border-rose-500/30'
-                  : 'bg-amber-500 hover:bg-amber-400 text-ink-950'
-              }`}
-            >
-              {isFollowing ? <UserMinus size={15} /> : <UserPlus size={15} />}
-              {followLoading ? '...' : isFollowing ? 'Unfollow' : 'Follow'}
-            </button>
-          )}
+          ) }
         </div>
       </div>
 
@@ -540,119 +472,6 @@ export default function NotePage() {
           )}
         </div>
 
-        {/* ── Comments ── (public notes only) */}
-        {note.isPublic && (
-          <div className="mt-14 border-t border-ink-800 pt-8" ref={bottomRef}>
-            <div className="flex items-center gap-2 mb-6">
-              <MessageCircle size={18} className="text-ink-500" />
-              <h2 className="font-display text-xl font-semibold text-ink-200">
-                Comments
-                <span className="ml-2 text-sm font-normal text-ink-600">({comments.length})</span>
-              </h2>
-            </div>
-
-            {/* Comment input */}
-            <form onSubmit={handleAddComment} className="mb-8">
-              <div className="flex gap-3">
-                {/* Current user avatar */}
-                <div className="flex-shrink-0 w-9 h-9 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center mt-1">
-                  {currentUser?.avatar ? (
-                    <img
-                      src={getImageUrl(currentUser.avatar)}
-                      alt={currentUser.name}
-                      className="w-full h-full rounded-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-amber-400 text-xs font-bold">
-                      {currentUser?.name?.[0] ?? '?'}
-                    </span>
-                  )}
-                </div>
-                <div className="flex-1 flex gap-2">
-                  <input
-                    type="text"
-                    value={commentText}
-                    onChange={e => setCommentText(e.target.value)}
-                    placeholder="Write a comment…"
-                    className="flex-1 bg-ink-900 border border-ink-700 rounded-xl px-4 py-2.5 text-ink-100 placeholder-ink-600 focus:outline-none focus:border-amber-500/50 transition-colors text-sm"
-                  />
-                  <button
-                    type="submit"
-                    disabled={submittingComment || !commentText.trim()}
-                    className="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 disabled:cursor-not-allowed text-ink-950 rounded-xl transition-all flex items-center gap-2 text-sm font-semibold flex-shrink-0"
-                  >
-                    <Send size={14} />
-                    Post
-                  </button>
-                </div>
-              </div>
-            </form>
-
-            {/* Comment list */}
-            {comments.length === 0 ? (
-              <div className="text-center py-10 text-ink-700">
-                <MessageCircle size={28} className="mx-auto mb-2" />
-                <p className="text-sm">No comments yet. Be the first!</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {comments.map(comment => (
-                  <div
-                    key={comment._id}
-                    className="bg-ink-900 border border-ink-800 rounded-xl p-4 transition-all hover:border-ink-700"
-                  >
-                    <div className="flex items-start gap-3">
-                      {/* Avatar */}
-                      {comment.user.avatar ? (
-                        <img
-                          src={getImageUrl(comment.user.avatar)}
-                          alt={comment.user.name}
-                          className="w-8 h-8 rounded-full object-cover flex-shrink-0"
-                        />
-                      ) : (
-                        <div className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center flex-shrink-0">
-                          <span className="text-amber-400 text-xs font-semibold">
-                            {comment.user.name[0]}
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Text */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <span className="text-sm font-semibold text-ink-200">
-                            {comment.user.name} {comment.user.surname}
-                          </span>
-                          <span className="text-xs text-ink-600 font-mono">
-                            @{comment.user.username}
-                          </span>
-                          <span className="text-xs text-ink-700">·</span>
-                          <span className="text-xs text-ink-600">
-                            {new Date(comment.createdAt).toLocaleDateString('en-US', {
-                              year: 'numeric', month: 'short', day: 'numeric',
-                            })}
-                          </span>
-                        </div>
-                        <p className="text-sm text-ink-300 leading-relaxed">{comment.text}</p>
-                      </div>
-
-                      {/* Delete — own comments only */}
-                      {comment.user._id === currentUser?._id && (
-                        <button
-                          onClick={() => handleDeleteComment(comment._id)}
-                          className="p-1.5 rounded-lg text-ink-700 hover:text-rose-400 hover:bg-rose-500/10 transition-all flex-shrink-0"
-                          title="Delete comment"
-                        >
-                          <Trash2 size={13} />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
       </div>
 
       {/* ── Edit Note Modal ── */}

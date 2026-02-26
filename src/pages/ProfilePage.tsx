@@ -1,11 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { updateMe, getImageUrl, getFollowers, getFollowing, removeFollower, unfollowUser, getAllNotes } from '../services/api'
-import { Camera, Save, User, Users, UserMinus, Instagram, Linkedin, Twitter, BookOpen, Globe } from 'lucide-react'
+import { updateMe, getImageUrl, getAllNotes } from '../services/api'
+import { Camera, Save, User, Instagram, Linkedin, Twitter, Globe } from 'lucide-react'
 import { Note } from '../types'
-import NoteCard from '../components/NoteCard'
 
-type Tab = 'profile' | 'followers' | 'following' | 'feed'
+type Tab = 'profile'
 
 interface UserItem {
   _id: string
@@ -49,46 +48,8 @@ const [form, setForm] = useState<{
   const [error, setError] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
 
-  const [followers, setFollowers] = useState<UserItem[]>([])
-  const [following, setFollowing] = useState<UserItem[]>([])
-  const [feedNotes, setFeedNotes] = useState<Note[]>([])
-  const [loadingData, setLoadingData] = useState(false)
 
-  useEffect(() => {
-    if (!user) return
-    if (activeTab === 'followers') fetchFollowers()
-    else if (activeTab === 'following') fetchFollowing()
-    else if (activeTab === 'feed') fetchFeed()
-  }, [activeTab, user])
-
-  const fetchFollowers = async () => {
-    if (!user) return
-    setLoadingData(true)
-    try {
-      const res = await getFollowers(user._id)
-      setFollowers(res.data.followers)
-    } catch (err) { console.error(err) }
-    finally { setLoadingData(false) }
-  }
-
-  const fetchFollowing = async () => {
-    if (!user) return
-    setLoadingData(true)
-    try {
-      const res = await getFollowing(user._id)
-      setFollowing(res.data.following)
-    } catch (err) { console.error(err) }
-    finally { setLoadingData(false) }
-  }
-
-  const fetchFeed = async () => {
-    setLoadingData(true)
-    try {
-      const res = await getAllNotes()
-      setFeedNotes(res.data.notes)
-    } catch (err) { console.error(err) }
-    finally { setLoadingData(false) }
-  }
+ 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -121,21 +82,6 @@ const [form, setForm] = useState<{
     }
   }
 
-  const handleRemoveFollower = async (userId: string) => {
-    if (!confirm('Remove this follower?')) return
-    try {
-      await removeFollower(userId)
-      setFollowers(prev => prev.filter(f => f._id !== userId))
-    } catch (err) { console.error(err) }
-  }
-
-  const handleUnfollow = async (userId: string) => {
-    if (!confirm('Unfollow this user?')) return
-    try {
-      await unfollowUser(userId)
-      setFollowing(prev => prev.filter(f => f._id !== userId))
-    } catch (err) { console.error(err) }
-  }
 
   const avatarSrc = avatarPreview || (user?.avatar ? getImageUrl(user.avatar) : '')
 
@@ -151,9 +97,6 @@ const [form, setForm] = useState<{
           <div className="flex gap-2 border-b border-ink-800 overflow-x-auto">
             {[
               { key: 'profile' as Tab, label: 'Edit Profile' },
-              { key: 'followers' as Tab, label: `Followers (${user?.followers?.length || 0})` },
-              { key: 'following' as Tab, label: `Following (${user?.following?.length || 0})` },
-              { key: 'feed' as Tab, label: 'Feed' },
             ].map(tab => (
               <button
                 key={tab.key}
@@ -311,9 +254,7 @@ onClick={() => setForm(prev => ({ ...prev, privacyMode: mode as 'public' | 'priv
                 ))}
               </div>
               <p className="text-xs text-ink-600 mt-2">
-                {form.privacyMode === 'public'
-                  ? 'Anyone can find and follow you.'
-                  : 'Only approved followers can see your notes.'}
+                {form.privacyMode === 'private' &&  'Only approved followers can see your notes.'}
               </p>
             </div>
 
@@ -332,112 +273,6 @@ onClick={() => setForm(prev => ({ ...prev, privacyMode: mode as 'public' | 'priv
           </form>
         )}
 
-        {/* ── Followers Tab ── */}
-        {activeTab === 'followers' && (
-          <div className="animate-fade-in">
-            {loadingData ? (
-              <div className="space-y-3">
-                {[...Array(3)].map((_, i) => (
-                  <div key={i} className="bg-ink-900 border border-ink-800 rounded-xl h-20 animate-pulse" />
-                ))}
-              </div>
-            ) : followers.length === 0 ? (
-              <div className="bg-ink-900 border border-ink-800 rounded-2xl p-12 text-center">
-                <Users size={32} className="text-ink-700 mx-auto mb-3" />
-                <p className="text-ink-500">No followers yet</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {followers.map(follower => (
-                  <div key={follower._id} className="bg-ink-900 border border-ink-800 rounded-xl p-4 flex items-center gap-4">
-                    {follower.avatar ? (
-                      <img src={getImageUrl(follower.avatar)} alt={follower.name} className="w-12 h-12 rounded-full object-cover" />
-                    ) : (
-                      <div className="w-12 h-12 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center">
-                        <User size={20} className="text-amber-400" />
-                      </div>
-                    )}
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-ink-100">{follower.name} {follower.surname}</p>
-                      <p className="text-xs text-ink-500 font-mono">@{follower.username}</p>
-                    </div>
-                    <button onClick={() => handleRemoveFollower(follower._id)}
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg border border-ink-700 text-ink-500 hover:text-rose-400 hover:border-rose-500/30 transition-all text-xs">
-                      <UserMinus size={13} />
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ── Following Tab ── */}
-        {activeTab === 'following' && (
-          <div className="animate-fade-in">
-            {loadingData ? (
-              <div className="space-y-3">
-                {[...Array(3)].map((_, i) => (
-                  <div key={i} className="bg-ink-900 border border-ink-800 rounded-xl h-20 animate-pulse" />
-                ))}
-              </div>
-            ) : following.length === 0 ? (
-              <div className="bg-ink-900 border border-ink-800 rounded-2xl p-12 text-center">
-                <Users size={32} className="text-ink-700 mx-auto mb-3" />
-                <p className="text-ink-500">Not following anyone yet</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {following.map(u => (
-                  <div key={u._id} className="bg-ink-900 border border-ink-800 rounded-xl p-4 flex items-center gap-4">
-                    {u.avatar ? (
-                      <img src={getImageUrl(u.avatar)} alt={u.name} className="w-12 h-12 rounded-full object-cover" />
-                    ) : (
-                      <div className="w-12 h-12 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center">
-                        <User size={20} className="text-amber-400" />
-                      </div>
-                    )}
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-ink-100">{u.name} {u.surname}</p>
-                      <p className="text-xs text-ink-500 font-mono">@{u.username}</p>
-                    </div>
-                    <button onClick={() => handleUnfollow(u._id)}
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg border border-ink-700 text-ink-500 hover:text-rose-400 hover:border-rose-500/30 transition-all text-xs">
-                      <UserMinus size={13} />
-                      Unfollow
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ── Feed Tab ── */}
-        {activeTab === 'feed' && (
-          <div className="animate-fade-in">
-            {loadingData ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="bg-ink-900 border border-ink-800 rounded-xl h-72 animate-pulse" />
-                ))}
-              </div>
-            ) : feedNotes.length === 0 ? (
-              <div className="bg-ink-900 border border-ink-800 rounded-2xl p-12 text-center">
-                <BookOpen size={32} className="text-ink-700 mx-auto mb-3" />
-                <p className="text-ink-500 mb-1">No posts from followed users</p>
-                <p className="text-xs text-ink-700">Follow some readers to see their notes here</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {feedNotes.map(note => (
-                  <NoteCard key={note._id} note={note} onDelete={() => {}} />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
       </div>
     </div>
   )

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { Note, Comment } from '../types'
-import { getComments, getImageUrl, addComment, deleteComment } from '../services/api'
+import { Note, } from '../types'
+import {  getImageUrl, } from '../services/api'
 import {
   BookOpen, Video, FileText, GraduationCap, StickyNote,
   ArrowLeft, MessageCircle, Send, Trash2, Globe, ExternalLink,
@@ -47,9 +47,7 @@ export default function SharedNotePage() {
   const [note, setNote] = useState<Note | null>(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
-  const [comments, setComments] = useState<Comment[]>([])
-  const [commentText, setCommentText] = useState('')
-  const [submittingComment, setSubmittingComment] = useState(false)
+ 
   const [showScrollTop, setShowScrollTop] = useState(false)
 
   // Show scroll-to-top button after scrolling down
@@ -84,40 +82,11 @@ export default function SharedNotePage() {
           return Promise.reject('not found')
         }
         setNote(found)
-        return getComments(found._id)
       })
-      .then(res => res && setComments(res.data.comments))
-      .catch(() => setNotFound(true))
-      .finally(() => setLoading(false))
   }, [slug, category])
 
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
   const scrollToBottom = () => bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-
-  const handleAddComment = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!commentText.trim() || !note) return
-    setSubmittingComment(true)
-    try {
-      const res = await addComment(note._id, commentText)
-      setComments(prev => [res.data.comment, ...prev])
-      setCommentText('')
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setSubmittingComment(false)
-    }
-  }
-
-  const handleDeleteComment = async (commentId: string) => {
-    if (!confirm('Delete comment?')) return
-    try {
-      await deleteComment(commentId)
-      setComments(prev => prev.filter(c => c._id !== commentId))
-    } catch (err) {
-      console.error(err)
-    }
-  }
 
   if (loading) return (
     <div className="min-h-screen bg-ink-950 flex items-center justify-center">
@@ -238,77 +207,7 @@ export default function SharedNotePage() {
           )}
         </div>
 
-        {/* Comments */}
-        <div className="mt-12 border-t border-ink-800 pt-8" ref={bottomRef}>
-          <div className="flex items-center gap-2 mb-6">
-            <MessageCircle size={18} className="text-ink-500" />
-            <h2 className="font-display text-xl font-semibold text-ink-200">Comments ({comments.length})</h2>
-          </div>
-
-          {currentUser ? (
-            <form onSubmit={handleAddComment} className="mb-6">
-              <div className="flex gap-3">
-                <input type="text" value={commentText} onChange={e => setCommentText(e.target.value)}
-                  placeholder="Write a comment..."
-                  className="flex-1 bg-ink-900 border border-ink-700 rounded-xl px-4 py-3 text-ink-100 placeholder-ink-600 focus:outline-none focus:border-amber-500/50 transition-colors text-sm"
-                />
-                <button type="submit" disabled={submittingComment || !commentText.trim()}
-                  className="px-4 py-3 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-ink-950 rounded-xl transition-all flex items-center gap-2 text-sm font-semibold"
-                >
-                  <Send size={14} />
-                  Post
-                </button>
-              </div>
-            </form>
-          ) : (
-            <div className="mb-6 bg-ink-900 border border-ink-800 rounded-xl px-5 py-4 flex items-center justify-between gap-4">
-              <div>
-                <p className="text-sm font-medium text-ink-300">Want to leave a comment?</p>
-                <p className="text-xs text-ink-600 mt-0.5">Create a free account or sign in to join the conversation.</p>
-              </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <Link to="/register" className="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-ink-950 rounded-lg text-xs font-semibold transition-colors">
-                  Sign up free
-                </Link>
-                <Link to="/login" className="px-3 py-2 border border-ink-700 hover:border-ink-500 text-ink-400 hover:text-ink-200 rounded-lg text-xs font-medium transition-colors">
-                  Sign in
-                </Link>
-              </div>
-            </div>
-          )}
-
-          <div className="space-y-4">
-            {comments.map(comment => (
-              <div key={comment._id} className="bg-ink-900 border border-ink-800 rounded-xl p-4">
-                <div className="flex items-start gap-3">
-                  {comment.user.avatar ? (
-                    <img src={getImageUrl(comment.user.avatar)} alt={comment.user.name} className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center flex-shrink-0">
-                      <span className="text-amber-400 text-xs font-semibold">{comment.user.name[0]}</span>
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-medium text-ink-200">{comment.user.name} {comment.user.surname}</span>
-                      <span className="text-xs text-ink-600 font-mono">@{comment.user.username}</span>
-                      <span className="text-xs text-ink-700">·</span>
-                      <span className="text-xs text-ink-600">{new Date(comment.createdAt).toLocaleDateString()}</span>
-                    </div>
-                    <p className="text-sm text-ink-300 leading-relaxed">{comment.text}</p>
-                  </div>
-                  {comment.user._id === currentUser?._id && (
-                    <button onClick={() => handleDeleteComment(comment._id)}
-                      className="p-1.5 rounded-lg text-ink-600 hover:text-rose-400 hover:bg-rose-500/10 transition-all flex-shrink-0"
-                    >
-                      <Trash2 size={13} />
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+  
       </div>
 
       {/* Floating scroll-to-top button */}

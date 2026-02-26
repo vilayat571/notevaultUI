@@ -1,23 +1,26 @@
 export interface User {
-  _id: string
-  name: string
-  surname: string
-  username: string
-  email: string
-  avatar?: string
-  bio?: string
-  followers?: string[]
-  following?: string[]
+  _id: string;
+  name: string;
+  surname: string;
+  username: string;
+  email: string;
+  avatar?: string;
+  bio?: string;
+
   // Add these:
-  subject?: string
-  instagramUrl?: string
-  twitterUrl?: string
-  linkedinUrl?: string
-  privacyMode?: 'public' | 'private'
+  subject?: string;
+  instagramUrl?: string;
+  twitterUrl?: string;
+  linkedinUrl?: string;
+  privacyMode?: "public" | "private";
 }
 
-export type NoteCategory = 'book' | 'video' | 'article' | 'course' | 'general';
-export type NoteStatus = 'currently_reading' | 'finished' | 'will_repeat' | 'repeated';
+export type NoteCategory = "book" | "video" | "article" | "course" | "general";
+export type NoteStatus =
+  | "currently_reading"
+  | "finished"
+  | "will_repeat"
+  | "repeated";
 
 export interface Note {
   _id: string;
@@ -31,38 +34,9 @@ export interface Note {
   link: string;
   author: string;
   status: NoteStatus;
-  visibility: 'private' | 'followers' | 'public';
+  visibility: "private" | "public";
   isPublic: boolean;
   order: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface Comment {
-  _id: string;
-  note: string;
-  user: User;
-  text: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface FollowRequest {
-  _id: string;
-  from: User;
-  to: User;
-  status: 'pending' | 'accepted' | 'declined';
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface Notification {
-  _id: string;
-  user: string;
-  from: User;
-  type: 'follow_request' | 'follow_accepted' | 'follow_removed' | 'comment';
-  note?: { _id: string; title: string };
-  isRead: boolean;
   createdAt: string;
   updatedAt: string;
 }
