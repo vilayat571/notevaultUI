@@ -12,9 +12,6 @@ import ProfilePage from "./pages/ProfilePage";
 import Layout from "./components/Layout";
 import LandingPage from "./pages/LandingPage";
 import ScrollToTop from "./components/ScrollToTop";
-import SharedNotePage from "./pages/SharedNotePage";
-import UsersPage from "./pages/UsersPage";
-import UserProfilePage from "./pages/UserProfile";
 import { Toaster } from "react-hot-toast";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -88,8 +85,6 @@ export default function App() {
           }
         />
 
-        {/* Public shared note — must come BEFORE the protected Layout block */}
-        <Route path="/:category/:slug" element={<SharedNotePage />} />
 
         <Route
           element={
@@ -102,8 +97,6 @@ export default function App() {
           <Route path="/discover" element={<DiscoverPage />} />
           <Route path="/notes/:id" element={<NotePage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/users" element={<UsersPage />} />
-          <Route path="/users/:userId" element={<UserProfilePage />} />
         </Route>
       </Routes>
     </>

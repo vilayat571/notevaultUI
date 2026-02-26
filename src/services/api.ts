@@ -81,13 +81,10 @@ export const discoverNotes = (params?: {
   search?: string;
   limit?: number;
   skip?: number;
-  userId?: string;        // ← NEW
 }) => api.get("/api/v1/notes/discover", { params });
 
 export const downloadNote = (id: string) =>
   api.get(`/api/v1/notes/download/${id}`, { responseType: "blob" });
-
-
 
 
 export const getImageUrl = (filename: string) =>

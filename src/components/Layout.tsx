@@ -1,30 +1,39 @@
-import { useState, useEffect } from 'react'
-import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
-import { BookOpen, LayoutDashboard, User, LogOut, Compass, Bell, Menu, Users } from 'lucide-react'
-import { getImageUrl } from '../services/api'
+import { useState, useEffect } from "react";
+import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import {
+  BookOpen,
+  LayoutDashboard,
+  User,
+  LogOut,
+  Compass,
+  Bell,
+  Menu,
+  Users,
+} from "lucide-react";
+import { getImageUrl } from "../services/api";
 
 export default function Layout() {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
-  const location = useLocation()
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    setSidebarOpen(false)
-  }, [location.pathname])
+    setSidebarOpen(false);
+  }, [location.pathname]);
 
   const handleLogout = () => {
-    logout()
-    navigate('/login')
-  }
+    logout();
+    navigate("/login");
+  };
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
       isActive
-        ? 'bg-amber-500/15 text-amber-400 border border-amber-500/20'
-        : 'text-ink-400 hover:text-ink-100 hover:bg-ink-800'
-    }`
+        ? "bg-amber-500/15 text-amber-400 border border-amber-500/20"
+        : "text-ink-400 hover:text-ink-100 hover:bg-ink-800"
+    }`;
 
   return (
     <div className="flex h-screen bg-ink-950 overflow-hidden">
@@ -42,7 +51,7 @@ export default function Layout() {
           fixed inset-y-0 left-0 z-50 w-64 flex-shrink-0
           bg-[#0f0d0b] border-r border-ink-800 flex flex-col
           transform transition-transform duration-300 ease-in-out
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
         `}
       >
         {/* Logo inside sidebar */}
@@ -50,7 +59,9 @@ export default function Layout() {
           <div className="w-7 h-7 gold-shimmer rounded-md flex items-center justify-center">
             <BookOpen size={13} className="text-ink-950" />
           </div>
-          <span className="font-display text-base font-semibold text-ink-50">NoteVault</span>
+          <span className="font-display text-base font-semibold text-ink-50">
+            NoteVault
+          </span>
         </div>
 
         {/* Nav */}
@@ -62,10 +73,6 @@ export default function Layout() {
           <NavLink to="/discover" className={navLinkClass}>
             <Compass size={17} />
             Discover
-          </NavLink>
-          <NavLink to="/users" className={navLinkClass}>
-            <Users size={17} />
-            People
           </NavLink>
           <NavLink to="/profile" className={navLinkClass}>
             <User size={17} />
@@ -90,7 +97,9 @@ export default function Layout() {
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-ink-100 truncate">{user?.name} {user?.surname}</p>
+              <p className="text-sm font-medium text-ink-100 truncate">
+                {user?.name} {user?.surname}
+              </p>
               <p className="text-xs text-ink-500 truncate">@{user?.username}</p>
             </div>
           </div>
@@ -119,12 +128,14 @@ export default function Layout() {
             <div className="w-6 h-6 gold-shimmer rounded-md flex items-center justify-center">
               <BookOpen size={12} className="text-ink-950" />
             </div>
-            <span className="font-display text-base font-semibold text-ink-50">NoteVault</span>
+            <span className="font-display text-base font-semibold text-ink-50">
+              NoteVault
+            </span>
           </div>
         </div>
 
         <Outlet />
       </main>
     </div>
-  )
+  );
 }
