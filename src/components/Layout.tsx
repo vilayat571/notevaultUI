@@ -59,7 +59,7 @@ export default function Layout() {
           <div className="w-7 h-7 gold-shimmer rounded-md flex items-center justify-center">
             <BookOpen size={13} className="text-ink-950" />
           </div>
-          <span className="font-display text-base font-semibold text-ink-50">
+          <span className=" text-base font-semibold text-ink-50">
             NoteVault
           </span>
         </div>
@@ -128,7 +128,7 @@ export default function Layout() {
             <div className="w-6 h-6 gold-shimmer rounded-md flex items-center justify-center">
               <BookOpen size={12} className="text-ink-950" />
             </div>
-            <span className="font-display text-base font-semibold text-ink-50">
+            <span className=" text-base font-semibold text-ink-50">
               NoteVault
             </span>
           </div>

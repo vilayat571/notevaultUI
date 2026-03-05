@@ -1,19 +1,41 @@
-import { useState, useEffect, useRef } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { Note, User as UserType } from '../types'
+import { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Note, User as UserType } from "../types";
 import {
-  getSingleNote, editNote, deleteNote, getImageUrl,
-} from '../services/api'
+  getSingleNote,
+  editNote,
+  deleteNote,
+  getImageUrl,
+} from "../services/api";
 import {
-  ArrowLeft, Edit3, Trash2, Save, BookOpen, Video, FileText,
-  GraduationCap, StickyNote, ExternalLink, Globe, Lock, X,
-  Download, MessageCircle, Send, User, UserPlus, UserMinus,
-  Share2, Check, ChevronUp, ChevronDown,
-} from 'lucide-react'
-import NoteModal from '../components/NoteModal'
-import RichTextEditor from '../components/RichTextEditor'
-import { useAuth } from '../context/AuthContext'
-import { noteSharePath } from '../utils/slugify'
+  ArrowLeft,
+  Edit3,
+  Trash2,
+  Save,
+  BookOpen,
+  Video,
+  FileText,
+  GraduationCap,
+  StickyNote,
+  ExternalLink,
+  Globe,
+  Lock,
+  X,
+  Download,
+  MessageCircle,
+  Send,
+  User,
+  UserPlus,
+  UserMinus,
+  Share2,
+  Check,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
+import NoteModal from "../components/NoteModal";
+import RichTextEditor from "../components/RichTextEditor";
+import { useAuth } from "../context/AuthContext";
+import { noteSharePath } from "../utils/slugify";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -23,111 +45,113 @@ const CATEGORY_ICONS: Record<string, React.ElementType> = {
   article: FileText,
   course: GraduationCap,
   general: StickyNote,
-}
+};
 
 const STATUS_COLORS: Record<string, string> = {
-  currently_reading: 'text-sky-400 bg-sky-500/10 border-sky-500/20',
-  finished:          'text-green-400 bg-green-500/10 border-green-500/20',
-  will_repeat:       'text-amber-400 bg-amber-500/10 border-amber-500/20',
-  repeated:          'text-violet-400 bg-violet-500/10 border-violet-500/20',
-}
+  currently_reading: "text-sky-400 bg-sky-500/10 border-sky-500/20",
+  finished: "text-green-400 bg-green-500/10 border-green-500/20",
+  will_repeat: "text-amber-400 bg-amber-500/10 border-amber-500/20",
+  repeated: "text-violet-400 bg-violet-500/10 border-violet-500/20",
+};
 
 const STATUS_LABELS: Record<string, string> = {
-  currently_reading: 'Currently Reading',
-  finished:          'Finished',
-  will_repeat:       'Will Repeat',
-  repeated:          'Repeated',
-}
+  currently_reading: "Currently Reading",
+  finished: "Finished",
+  will_repeat: "Will Repeat",
+  repeated: "Repeated",
+};
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function NotePage() {
-  const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
-  const { user: currentUser } = useAuth()
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { user: currentUser } = useAuth();
 
   // Core state
-  const [note, setNote]                     = useState<Note | null>(null)
-  const [loading, setLoading]               = useState(true)
-  const [content, setContent]               = useState('')
-  const [editing, setEditing]               = useState(false)
-  const [saving, setSaving]                 = useState(false)
-  const [showEditModal, setShowEditModal]   = useState(false)
-
-
+  const [note, setNote] = useState<Note | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [content, setContent] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   // UI
-  const [copied, setCopied]                 = useState(false)
-  const [showScrollTop, setShowScrollTop]   = useState(false)
-  const bottomRef = useRef<HTMLDivElement>(null)
+  const [copied, setCopied] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   // ─── Scroll listener ────────────────────────────────────────────────────────
   useEffect(() => {
-    const onScroll = () => setShowScrollTop(window.scrollY > 400)
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+    const onScroll = () => setShowScrollTop(window.scrollY > 400);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   // ─── Data fetch ─────────────────────────────────────────────────────────────
   useEffect(() => {
-    if (!id) return
-    setLoading(true)
+    if (!id) return;
+    setLoading(true);
 
     getSingleNote(id)
-      .then(res => {
-        const n: Note = res.data.note
-        setNote(n)
-        setContent(n.content || '')
-        const noteUser = n.user as UserType
+      .then((res) => {
+        const n: Note = res.data.note;
+        setNote(n);
+        setContent(n.content || "");
+        const noteUser = n.user as UserType;
       })
-      .catch(() => navigate('/dashboard'))
-      .finally(() => setLoading(false))
-
-
-  }, [id])
+      .catch(() => navigate("/dashboard"))
+      .finally(() => setLoading(false));
+  }, [id]);
 
   // ─── Helpers ────────────────────────────────────────────────────────────────
-  const scrollToTop    = () => window.scrollTo({ top: 0, behavior: 'smooth' })
-  const scrollToBottom = () => bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  const scrollToBottom = () =>
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
 
   // ─── Share ──────────────────────────────────────────────────────────────────
   const handleShare = async () => {
-    if (!note) return
-    const path = noteSharePath(note.category, note.title, note._id)
-    const url  = `${window.location.origin}${path}`
+    if (!note) return;
+    const path = noteSharePath(note.category, note.title, note._id);
+    const url = `${window.location.origin}${path}`;
     try {
-      await navigator.clipboard.writeText(url)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     } catch {
-      window.prompt('Copy this link:', url)
+      window.prompt("Copy this link:", url);
     }
-  }
+  };
 
   // ─── PDF / Download ─────────────────────────────────────────────────────────
   const handleDownload = () => {
-    if (!note) return
+    if (!note) return;
 
-    const noteUser       = typeof note.user === 'string' ? null : note.user
-    const noteUserLine   = noteUser
+    const noteUser = typeof note.user === "string" ? null : note.user;
+    const noteUserLine = noteUser
       ? `${noteUser.name} ${noteUser.surname} (@${noteUser.username})`
-      : ''
-    const exportDate     = new Date().toLocaleDateString('en-US', {
-      year: 'numeric', month: 'long', day: 'numeric',
-    })
-    const createdAtLine  = note.createdAt
-      ? new Date(note.createdAt).toLocaleString('en-US', {
-          year: 'numeric', month: 'long', day: 'numeric',
-          hour: '2-digit', minute: '2-digit',
+      : "";
+    const exportDate = new Date().toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    const createdAtLine = note.createdAt
+      ? new Date(note.createdAt).toLocaleString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
         })
-      : ''
-    const coverImageUrl  = note.cover ? getImageUrl(note.cover) : null
-    const coverHtml      =
-      note.category === 'general' && note.coverColor
+      : "";
+    const coverImageUrl = note.cover ? getImageUrl(note.cover) : null;
+    const coverHtml =
+      note.category === "general" && note.coverColor
         ? `<div class="cover-solid" style="background:${note.coverColor};"></div>`
         : coverImageUrl
           ? `<img class="cover-img" src="${coverImageUrl}" alt="${note.title}" crossorigin="anonymous" />`
-          : ''
+          : "";
 
     const html = `<!DOCTYPE html>
 <html lang="en">
@@ -177,10 +201,10 @@ export default function NotePage() {
   <div class="wrapper">
     <header>
       <h1>${note.title}</h1>
-      ${note.author     ? `<p class="meta-line">by ${note.author}</p>` : ''}
-      ${noteUserLine    ? `<p class="meta-line">Note by: ${noteUserLine}</p>` : ''}
-      ${createdAtLine   ? `<p class="meta-line" style="font-size:12px;color:#b3b3b3;margin-top:4px;">Added on ${createdAtLine}</p>` : ''}
-      ${note.description? `<p class="description">${note.description}</p>` : ''}
+      ${note.author ? `<p class="meta-line">by ${note.author}</p>` : ""}
+      ${noteUserLine ? `<p class="meta-line">Note by: ${noteUserLine}</p>` : ""}
+      ${createdAtLine ? `<p class="meta-line" style="font-size:12px;color:#b3b3b3;margin-top:4px;">Added on ${createdAtLine}</p>` : ""}
+      ${note.description ? `<p class="description">${note.description}</p>` : ""}
     </header>
     <main>
       <p class="section-label">Notes &amp; Thoughts</p>
@@ -195,67 +219,71 @@ export default function NotePage() {
   </div>
   <script>window.onload = () => { window.print(); window.onafterprint = () => window.close() }<\/script>
 </body>
-</html>`
+</html>`;
 
-    const blob = new Blob([html], { type: 'text/html' })
-    const url  = URL.createObjectURL(blob)
-    const win  = window.open(url, '_blank', 'width=1300,height=800')
-    if (win) win.onload = () => URL.revokeObjectURL(url)
-  }
-
-
- 
-
+    const blob = new Blob([html], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const win = window.open(url, "_blank", "width=1300,height=800");
+    if (win) win.onload = () => URL.revokeObjectURL(url);
+  };
 
   // ─── Save note content ──────────────────────────────────────────────────────
   const handleSaveContent = async () => {
-    if (!note) return
-    setSaving(true)
+    if (!note) return;
+    setSaving(true);
     try {
-      const fd = new FormData()
-      fd.append('content',  content)
-      fd.append('title',    note.title)
-      fd.append('category', note.category)
-      fd.append('status',   note.status)
-      fd.append('isPublic', String(note.isPublic))
-      const res = await editNote(note._id, fd)
-      setNote(res.data.note)
-      setEditing(false)
+      const fd = new FormData();
+      fd.append("content", content);
+      fd.append("title", note.title);
+      fd.append("category", note.category);
+      fd.append("status", note.status);
+      fd.append("isPublic", String(note.isPublic));
+      const res = await editNote(note._id, fd);
+      setNote(res.data.note);
+      setEditing(false);
     } catch (err) {
-      console.error(err)
+      console.error(err);
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   // ─── Delete note ────────────────────────────────────────────────────────────
   const handleDelete = async () => {
-    if (!note || !confirm('Delete this note? This cannot be undone.')) return
-    await deleteNote(note._id)
-    navigate('/dashboard')
-  }
+    if (!note || !confirm("Delete this note? This cannot be undone.")) return;
+    await deleteNote(note._id);
+    navigate("/dashboard");
+  };
 
   // ─── Loading ────────────────────────────────────────────────────────────────
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
-    </div>
-  )
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
 
-  if (!note) return null
+  if (!note) return null;
 
-  const Icon     = CATEGORY_ICONS[note.category] ?? StickyNote
-  const noteUser = typeof note.user === 'string' ? null : note.user
-  const isOwner  = currentUser?._id === noteUser?._id
+  const Icon = CATEGORY_ICONS[note.category] ?? StickyNote;
+  const noteUser = typeof note.user === "string" ? null : note.user;
+  const isOwner = currentUser?._id === noteUser?._id;
+
+  const editAndScroll = () => {
+    setShowEditModal(true);
+    return scrollToBottom();
+  };
 
   // ─── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen">
-
       {/* ── Hero ── */}
       <div className="relative h-72 overflow-hidden">
-        {note.category === 'general' ? (
-          <div className="w-full h-full" style={{ backgroundColor: note.coverColor }} />
+        {note.category === "general" ? (
+          <div
+            className="w-full h-full"
+            style={{ backgroundColor: note.coverColor }}
+          />
         ) : note.cover ? (
           <img
             src={getImageUrl(note.cover)}
@@ -288,19 +316,18 @@ export default function NotePage() {
 
         {/* Action buttons — top right */}
         <div className="absolute top-5 right-5 flex items-center gap-2 flex-wrap justify-end">
-
           {/* Share — only for public notes */}
           {note.isPublic && (
             <button
               onClick={handleShare}
               className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm border transition-all ${
                 copied
-                  ? 'bg-green-500/15 border-green-500/30 text-green-400'
-                  : 'bg-ink-950/60 backdrop-blur-sm border-ink-700/50 text-ink-300 hover:text-ink-100'
+                  ? "bg-green-500/15 border-green-500/30 text-green-400"
+                  : "bg-ink-950/60 backdrop-blur-sm border-ink-700/50 text-ink-300 hover:text-ink-100"
               }`}
             >
               {copied ? <Check size={15} /> : <Share2 size={15} />}
-              {copied ? 'Copied!' : 'Share'}
+              {copied ? "Copied!" : "Share"}
             </button>
           )}
 
@@ -316,7 +343,7 @@ export default function NotePage() {
           {isOwner && (
             <>
               <button
-                onClick={() => setShowEditModal(true)}
+                onClick={() => editAndScroll()}
                 className="bg-ink-950/60 backdrop-blur-sm border border-ink-700/50 p-2 rounded-xl text-ink-400 hover:text-ink-100 transition-colors"
                 title="Edit note info"
               >
@@ -330,13 +357,12 @@ export default function NotePage() {
                 <Trash2 size={15} />
               </button>
             </>
-          ) }
+          )}
         </div>
       </div>
 
       {/* ── Body ── */}
       <div className="xl:w-[90%] lg:w-[95%] w-full mx-auto px-4 -mt-20 relative z-10 pb-24">
-
         {/* Author card — only shown when viewing someone else's note */}
         {noteUser && !isOwner && (
           <div className="bg-ink-900/90 backdrop-blur-sm border border-ink-800 rounded-xl p-4 flex items-center gap-3 mb-6">
@@ -355,7 +381,9 @@ export default function NotePage() {
               <p className="text-sm font-medium text-ink-200 truncate">
                 {noteUser.name} {noteUser.surname}
               </p>
-              <p className="text-xs text-ink-500 font-mono truncate">@{noteUser.username}</p>
+              <p className="text-xs text-ink-500 font-mono truncate">
+                @{noteUser.username}
+              </p>
             </div>
           </div>
         )}
@@ -364,32 +392,44 @@ export default function NotePage() {
         <div className="flex items-center gap-3 mb-4 flex-wrap">
           <div className="flex items-center gap-1.5 bg-ink-900 border border-ink-800 px-3 py-1.5 rounded-lg">
             <Icon size={13} className="text-amber-400" />
-            <span className="text-xs font-medium text-ink-300 capitalize">{note.category}</span>
+            <span className="text-xs font-medium text-ink-300 capitalize">
+              {note.category}
+            </span>
           </div>
-          <span className={`text-xs px-2.5 py-1 rounded-lg border font-medium ${STATUS_COLORS[note.status]}`}>
+          <span
+            className={`text-xs px-2.5 py-1 rounded-lg border font-medium ${STATUS_COLORS[note.status]}`}
+          >
             {STATUS_LABELS[note.status]}
           </span>
-          <span className="ml-auto" title={note.isPublic ? 'Public' : 'Private'}>
-            {note.isPublic
-              ? <Globe size={14} className="text-ink-500" />
-              : <Lock  size={14} className="text-ink-700" />
-            }
+          <span
+            className="ml-auto"
+            title={note.isPublic ? "Public" : "Private"}
+          >
+            {note.isPublic ? (
+              <Globe size={14} className="text-ink-500" />
+            ) : (
+              <Lock size={14} className="text-ink-700" />
+            )}
           </span>
         </div>
 
         {/* Title */}
-        <h1 className="font-display text-4xl font-bold text-ink-50 mb-3 leading-tight">
+        <h1 className="text-4xl font-bold text-ink-50 mb-3 leading-tight">
           {note.title}
         </h1>
 
         {/* Author / book author */}
         {note.author && (
-          <p className="text-ink-500 font-mono text-sm mb-2">by {note.author}</p>
+          <p className="text-ink-500 font-mono text-sm mb-2">
+            by {note.author}
+          </p>
         )}
 
         {/* Description */}
         {note.description && (
-          <p className="text-ink-400 text-base leading-relaxed mb-4">{note.description}</p>
+          <p className="text-ink-400 text-base leading-relaxed mb-4">
+            {note.description}
+          </p>
         )}
 
         {/* External link */}
@@ -401,21 +441,26 @@ export default function NotePage() {
             className="inline-flex items-center gap-2 text-sm text-amber-400 hover:text-amber-300 transition-colors mb-6 font-mono break-all"
           >
             <ExternalLink size={14} className="flex-shrink-0" />
-            {note.link.length > 70 ? note.link.slice(0, 70) + '…' : note.link}
+            {note.link.length > 70 ? note.link.slice(0, 70) + "…" : note.link}
           </a>
         )}
 
         {/* ── Notes & Thoughts ── */}
         <div className="border-t border-ink-800 mt-6 pt-8">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="font-display text-xl font-semibold text-ink-200">Notes & Thoughts</h2>
+            <h2 className="text-xl font-semibold text-ink-200">
+              Notes & Thoughts
+            </h2>
 
             {isOwner && (
               <div className="flex items-center gap-2">
                 {editing ? (
                   <>
                     <button
-                      onClick={() => { setEditing(false); setContent(note.content || '') }}
+                      onClick={() => {
+                        setEditing(false);
+                        setContent(note.content || "");
+                      }}
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-ink-700 text-ink-500 hover:text-ink-200 text-xs transition-colors"
                     >
                       <X size={13} />
@@ -427,7 +472,7 @@ export default function NotePage() {
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-ink-950 text-xs font-semibold transition-colors disabled:opacity-50"
                     >
                       <Save size={13} />
-                      {saving ? 'Saving…' : 'Save'}
+                      {saving ? "Saving…" : "Save"}
                     </button>
                   </>
                 ) : (
@@ -461,8 +506,13 @@ export default function NotePage() {
               onClick={() => setEditing(true)}
               className="w-full bg-ink-900 border border-dashed border-ink-800 rounded-2xl px-6 py-16 text-center text-ink-600 hover:border-amber-500/30 hover:text-ink-500 transition-all group"
             >
-              <Edit3 size={24} className="mx-auto mb-3 text-ink-700 group-hover:text-ink-500 transition-colors" />
-              <p className="text-sm">Click to add your notes and reflections…</p>
+              <Edit3
+                size={24}
+                className="mx-auto mb-3 text-ink-700 group-hover:text-ink-500 transition-colors"
+              />
+              <p className="text-sm">
+                Click to add your notes and reflections…
+              </p>
             </button>
           ) : (
             <div className="bg-ink-900 border border-dashed border-ink-800 rounded-2xl px-6 py-16 text-center text-ink-600">
@@ -471,7 +521,6 @@ export default function NotePage() {
             </div>
           )}
         </div>
-
       </div>
 
       {/* ── Edit Note Modal ── */}
@@ -480,20 +529,19 @@ export default function NotePage() {
           editingNote={note}
           onClose={() => setShowEditModal(false)}
           onSaved={() => {
-            setShowEditModal(false)
-            getSingleNote(note._id).then(res => setNote(res.data.note))
+            setShowEditModal(false);
+            getSingleNote(note._id).then((res) => setNote(res.data.note));
           }}
         />
       )}
 
-
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-10 right-8 z-50 w-11 h-11 bg-amber-500 hover:bg-amber-400 text-ink-950 rounded-full flex items-center justify-center shadow-lg shadow-amber-500/30 transition-all"
-          title="Back to top"
-        >
-          <ChevronUp size={20} />
-        </button>
+      <button
+        onClick={scrollToTop}
+        className="fixed bottom-10 right-8 z-50 w-11 h-11 bg-amber-500 hover:bg-amber-400 text-ink-950 rounded-full flex items-center justify-center shadow-lg shadow-amber-500/30 transition-all"
+        title="Back to top"
+      >
+        <ChevronUp size={20} />
+      </button>
     </div>
-  )
+  );
 }

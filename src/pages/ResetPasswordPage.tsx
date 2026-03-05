@@ -41,7 +41,7 @@ export default function ResetPasswordPage() {
           <div className="w-16 h-16 bg-green-500/15 border border-green-500/30 rounded-2xl flex items-center justify-center mx-auto mb-6">
             <Check size={32} className="text-green-400" />
           </div>
-          <h2 className="font-display text-2xl font-bold text-ink-50 mb-3">Password reset!</h2>
+          <h2 className="text-2xl font-bold text-ink-50 mb-3">Password reset!</h2>
           <p className="text-ink-400">Redirecting to login...</p>
         </div>
       </div>
@@ -55,10 +55,10 @@ export default function ResetPasswordPage() {
           <div className="w-8 h-8 gold-shimmer rounded-lg flex items-center justify-center">
             <BookOpen size={15} className="text-ink-950" />
           </div>
-          <span className="font-display text-xl font-semibold text-ink-50">NoteVault</span>
+          <span className="text-xl font-semibold text-ink-50">NoteVault</span>
         </div>
 
-        <h2 className="font-display text-3xl font-bold text-ink-50 mb-2">Set new password</h2>
+        <h2 className="text-3xl font-bold text-ink-50 mb-2">Set new password</h2>
         <p className="text-ink-500 mb-8">Enter your new password below</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
